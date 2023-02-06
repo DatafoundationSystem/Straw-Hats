@@ -1,6 +1,6 @@
 # Straw-Hats
 
-Project Name: AI / CV Pipeline (images)
+# Project Name: AI / CV Pipeline (images)
 
 Project Category: AI / CV Pipeline
 
