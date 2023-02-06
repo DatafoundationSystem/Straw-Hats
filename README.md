@@ -116,6 +116,6 @@ Throughout the project, we can divide it into phases in order to have modular, s
 
 ### 5. Representation:
 
-![alt text](image.jpg)
+![alt text](./Assets/Images/Class Diagram.jpg)
 
 **Figure:** Use Case Diagram
