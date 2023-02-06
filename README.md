@@ -116,6 +116,6 @@ Throughout the project, we can divide it into phases in order to have modular, s
 
 ### 5. Representation:
 
-![alt text](./Assets/Images/Class Diagram.jpg)
+![alt text](https://github.com/Jasika16/Straw-Hats/blob/main/Assets/Images/Class%20Diagram.jpg)
 
 **Figure:** Use Case Diagram
