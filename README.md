@@ -17,7 +17,7 @@
 | --- | --- |
 | Jasika Shah | 2021201063 |
 | Vishal Mani Mishra | 2021201050 |
-| Nilesh Kumar Jha | 2021202017 |
+| Nileshkumar Jha | 2021202017 |
 
 ![Shape2](RackMultipart20230206-1-e2q3zn_html_237499165a11f2b9.gif)
 
@@ -139,7 +139,7 @@ We propose a distributed platform that provides build, development and deploymen
   - Creates a docker container for each of the services and components deployed on the platform.
   - Runs these containers on nodes with least load.
   - Performs load balancing.
-  
+
 **5.4 Scheduler:**
   - Generates a config.json using the pipeline components specified by the end-user through UI.
   - Execute the components according to config.json by providing the input and fetching the output while checking the consistency i.e. output of one component must match the input of next component in the pipeline.
