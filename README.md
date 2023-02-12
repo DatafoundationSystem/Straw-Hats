@@ -118,7 +118,9 @@ Throughout the project, we can divide it into phases in order to have modular, s
 
 ### 5. Architecture:
 
-**5.1 Gateway Service:**
+**5.1 UI Manager:**
+  - Provides a CV components toolbar, with drag and drop functionality to create a customized CV pipeline
+  - Redirects the requests to various services. 
 
 **5.2 Component Manager:**
   - Upload Components as zip file. The contents of zip file should be as follows.
@@ -145,7 +147,11 @@ Throughout the project, we can divide it into phases in order to have modular, s
 ### 6. Representation:
 
 ![alt text](https://github.com/Jasika16/Straw-Hats/blob/main/Assets/Images/Class%20Diagram.jpg)
-![alt text](https://github.com/Jasika16/Straw-Hats/blob/main/Assets/Images/ER%20Diagram.png)
-
 
 **Figure:** Use Case Diagram
+
+
+
+![alt text](https://github.com/Jasika16/Straw-Hats/blob/main/Assets/Images/ER%20Diagram.png)
+
+**Figure:** ER Diagram
