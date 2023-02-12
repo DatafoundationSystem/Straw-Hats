@@ -131,8 +131,14 @@ Throughout the project, we can divide it into phases in order to have modular, s
             └── src.py
     ```
   - Wraps a node.js server with `/predict` endpoint to call `predict` function inside 
+
 **5.3 Node Manager:**
+
 **5.4 Scheduler:**
+  - Generates a config.json using the pipeline components specified by the end-user through UI.
+  - Execute the components according to config.json by providing the input and fetching the output while checking the consistency i.e. output of one component must match the input of next component in the pipeline.
+  - Provides the end output of pipeline to the UI 
+
 **5.5 Nodes:**
 **5.6 Monitoring Service:**
   - Health check calls `/health` endpoint of every registered service to check if the service is running. If found not running, it communicates with Node Manager to get a machine with least load and run the service on that machine.
@@ -141,5 +147,7 @@ Throughout the project, we can divide it into phases in order to have modular, s
 ### 6. Representation:
 
 ![alt text](https://github.com/Jasika16/Straw-Hats/blob/main/Assets/Images/Class%20Diagram.jpg)
+![alt text](https://github.com/Jasika16/Straw-Hats/blob/main/Assets/Images/ER%20Diagram.png)
+
 
 **Figure:** Use Case Diagram
