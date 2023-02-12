@@ -141,7 +141,9 @@ We propose a distributed platform that provides build, development and deploymen
   - Also performs load balancing.
 
 **5.4 Scheduler:**
-  - 
+  - Generates a config.json using the pipeline components specified by the end-user through UI.
+  - Execute the components according to config.json by providing the input and fetching the output while checking the consistency i.e. output of one component must match the input of next component in the pipeline.
+  - Provides the end output of pipeline to the UI 
 
 **5.5 Nodes:**
   - The nodes are running containers of different microservices and components which are deployed on the platform.
@@ -157,5 +159,7 @@ We propose a distributed platform that provides build, development and deploymen
 ### 6. Representation:
 
 ![alt text](https://github.com/Jasika16/Straw-Hats/blob/main/Assets/Images/Class%20Diagram.jpg)
+![alt text](https://github.com/Jasika16/Straw-Hats/blob/main/Assets/Images/ER%20Diagram.png)
+
 
 **Figure:** Use Case Diagram
