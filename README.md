@@ -103,11 +103,11 @@ We suggest the following algorithm to prevent eavesdropping or replay attacks po
 
 Throughout the project, we can divide it into phases in order to have modular, scalable, and optimized versions of the previous phases. The following components will be delivered at the end :
 
-  - A source code for the AI/CV pipeline, including any relevant scripts, libraries, and packages used in the project.
+  - Build AI/CV pipeline platform that enables users to add multiple components and provide input images to get the desired output.
+  - Build multiple services as a part of our platform to provide diffirent functionalities. 
+  - Provide an interactive and secure user interface that allows users to drag and drop required components and upload input images and requirements.
   - Integrated multiple AI/CV and Data Processing components that will be required throughout the life cycle of the services.
-  - The dataset used in the project along with the preprocessing steps used in the AI/CV pipeline.
   - Deployment Scripts: Scripts for deploying the AI/CV pipeline in a production environment, including any necessary infrastructure setup and configuration.
-  - Build AI/CV pipeline for any dataset so that the user can choose the data processing components according to its requirements.
   - Execution of the components and providing the final pre-processed data to the end user.
   - Project Report: A detailed report outlining the objectives, methodology, results, and conclusions of the project.
 
@@ -120,6 +120,7 @@ Throughout the project, we can divide it into phases in order to have modular, s
 
 **5.1 Gateway Service:**
 
+
 **5.2 Component Manager:**
   - Upload Components as zip file. The contents of zip file should be as follows.
     ```
@@ -130,16 +131,14 @@ Throughout the project, we can divide it into phases in order to have modular, s
         └── src
             └── src.py
     ```
-  - Wraps a node.js server with `/predict` endpoint to call `predict` function inside `predict.py` file.
+  - Wraps a node.js server with `/predict` endpoint to call `predict` function inside 
 **5.3 Node Manager:**
-  - Creates a docker container for each of the services and components deployed on the platform.
-  - Runs these containers on nodes with least load.
-  - Performs load balancing.
 **5.4 Scheduler:**
 **5.5 Nodes:**
 **5.6 Monitoring Service:**
   - Health check calls `/health` endpoint of every registered service to check if the service is running. If found not running, it communicates with Node Manager to get a machine with least load and run the service on that machine.
   - Health check pings all the service's IP to check if any machine is down or out of the network. If found not reachable, another instance of the same service is relaunched.
+**5.7 Authentication Service:**
   - 
 ### 6. Representation:
 
