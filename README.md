@@ -130,8 +130,11 @@ Throughout the project, we can divide it into phases in order to have modular, s
         └── src
             └── src.py
     ```
-  - Wraps a node.js server with `/predict` endpoint to call `predict` function inside 
+  - Wraps a node.js server with `/predict` endpoint to call `predict` function inside `predict.py` file.
 **5.3 Node Manager:**
+  - Creates a docker container for each of the services and components deployed on the platform.
+  - Runs these containers on nodes with least load.
+  - Performs load balancing.
 **5.4 Scheduler:**
 **5.5 Nodes:**
 **5.6 Monitoring Service:**
