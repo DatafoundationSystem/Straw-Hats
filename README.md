@@ -134,10 +134,12 @@ We propose a distributed platform that provides build, development and deploymen
             └── src.py
     ```
   - Wraps a node.js server with `/predict` endpoint to call `predict` function inside `predict.py` file.
+
 **5.3 Node Manager:**
   - Creates a docker container for each of the services and components deployed on the platform.
   - Runs these containers on nodes with least load.
   - Performs load balancing.
+  
 **5.4 Scheduler:**
   - Generates a config.json using the pipeline components specified by the end-user through UI.
   - Execute the components according to config.json by providing the input and fetching the output while checking the consistency i.e. output of one component must match the input of next component in the pipeline.
