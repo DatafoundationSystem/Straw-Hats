@@ -131,9 +131,7 @@ Throughout the project, we can divide it into phases in order to have modular, s
             └── src.py
     ```
   - Wraps a node.js server with `/predict` endpoint to call `predict` function inside 
-
 **5.3 Node Manager:**
-
 **5.4 Scheduler:**
   - Generates a config.json using the pipeline components specified by the end-user through UI.
   - Execute the components according to config.json by providing the input and fetching the output while checking the consistency i.e. output of one component must match the input of next component in the pipeline.
