@@ -137,7 +137,6 @@ Throughout the project, we can divide it into phases in order to have modular, s
 **5.6 Monitoring Service:**
   - Health check calls `/health` endpoint of every registered service to check if the service is running. If found not running, it communicates with Node Manager to get a machine with least load and run the service on that machine.
   - Health check pings all the service's IP to check if any machine is down or out of the network. If found not reachable, another instance of the same service is relaunched.
-**5.7 Authentication Service:**
   - 
 ### 6. Representation:
 
