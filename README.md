@@ -161,16 +161,15 @@ We propose a distributed platform that provides build, development and deploymen
 
 ### 6. Representation:
 
-**Class Diagram**<br />
+**Class Diagram**
+
 ![alt text](https://github.com/Jasika16/Straw-Hats/blob/main/Assets/Images/Class%20Diagram.jpg)
 
 **Figure:** Use Case Diagram
 
 
+**ER Diagram**
+
 ![alt text](https://github.com/Jasika16/Straw-Hats/blob/main/Assets/Images/ER%20Diagram.png)
 
 **Figure:** ER Diagram
-
-**Use Case Diagram**<br />
-![alt text](https://github.com/Jasika16/Straw-Hats/blob/main/Assets/Images/ER%20Diagram.png)
-
