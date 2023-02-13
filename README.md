@@ -103,12 +103,12 @@ We suggest the following algorithm to prevent eavesdropping or replay attacks po
 
 Throughout the project, we can divide it into phases in order to have modular, scalable, and optimized versions of the previous phases. The following components will be delivered at the end :
 
-  - Build AI/CV pipeline platform that enables users to add multiple components and provide input images to get the desired output.
+  - Build AI/CV pipeline platform that enables users to add multiple Tools and provide input images to get the desired output.
   - Build multiple services as a part of our platform to provide diffirent functionalities. 
-  - Provide an interactive and secure user interface that allows users to drag and drop required components and upload input images and requirements.
+  - Provide an interactive and secure user interface that allows users to drag and drop required CV Tools and upload input images and requirements.
   - Integrated multiple AI/CV and Data Processing components that will be required throughout the life cycle of the services.
   - Deployment Scripts: Scripts for deploying the AI/CV pipeline in a production environment, including any necessary infrastructure setup and configuration.
-  - Execution of the components and providing the final pre-processed data to the end user.
+  - Execution of the CV Tools and providing the final pre-processed data to the end user.
   - Project Report: A detailed report outlining the objectives, methodology, results, and conclusions of the project.
 
 **4.2 Project out of scope:**
@@ -118,17 +118,23 @@ Throughout the project, we can divide it into phases in order to have modular, s
 
 ### 5. Architecture:
 
-We propose a distributed platform that provides build, development and deployment functionalities for different AI/CV components. Most data becomes useless just seconds after 1s it is generated, so having the lowest latency possible between the data and the decision is critical. With this platform, we bring AI preprocessing capabilities to edge gateway. The platform consists of following microservices.
+We propose a distributed platform that provides build, development and deployment functionalities for different AI/CV Tools. Most data becomes useless just seconds after 1s it is generated, so having the lowest latency possible between the data and the decision is critical. With this platform, we bring AI preprocessing capabilities to edge gateway. The platform consists of following microservices.
+
+
+![alt text](https://github.com/Jasika16/Straw-Hats/blob/main/Assets/Images/System%20Architecture.png)
+
+**Figure:** System Architecture
+
 
 **5.1 UI Manager:**
   - Provides a CV components toolbar, with drag and drop functionality to create a customized CV pipeline
   - Redirects the requests to various services. 
 
 
-**5.2 Component Manager:**
-  - Users can upload components as zip file. The contents of zip file should be as follows.
+**5.2 CV_Tools Manager:**
+  - Users can upload CV_Tool as zip file. The contents of zip file should be as follows.
     ```
-    └── component
+    └── CV_Tool
         ├── config.json
         ├── predict.py
         ├── requriements.txt
@@ -137,21 +143,22 @@ We propose a distributed platform that provides build, development and deploymen
     ```
   - Wraps a node.js server with `/predict` endpoint to call `predict` function inside `predict.py` file.
 **5.3 Node Manager:**
-  - Creates a docker container for each of the services and components deployed on the platform.
+  - Creates a docker container for each of the services and CV_Tools deployed on the platform.
   - Runs these containers on nodes with least load.
   - Performs load balancing.
 **5.4 Scheduler:**
-  - Generates a config.json using the pipeline components specified by the end-user through UI.
-  - Execute the components according to config.json by providing the input and fetching the output while checking the consistency i.e. output of one component must match the input of next component in the pipeline.
+  - Generates a config.json using the pipeline CV_Tools specified by the end-user through UI.
+  - Execute the CV_Tool according to config.json by providing the input and fetching the output while checking the consistency i.e. output of one CV_Tool must match the input of next CV_Tool in the pipeline.
   - Provides the end output of pipeline to the UI 
 
 **5.5 Nodes:**
-  - The nodes are running containers of different microservices and components which are deployed on the platform.
+  - The nodes are running containers of different microservices and CV Tools which are deployed on the platform.
 
 **5.6 Monitoring Service:**
   - Health check calls `/health` endpoint of every registered service to check if the service is running. If found not running, it communicates with Node Manager to get a machine with least load and run the service on that machine.
   - Health check pings all the service's IP to check if any machine is down or out of the network. If found not reachable, another instance of the same service is relaunched.
-  - 
+
+
 ### 6. Representation:
 
 ![alt text](https://github.com/Jasika16/Straw-Hats/blob/main/Assets/Images/Class%20Diagram.jpg)
