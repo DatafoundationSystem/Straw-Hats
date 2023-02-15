@@ -1,4 +1,4 @@
-
+scalable
 # Data Foundation Systems
 
 ## Software Requirements & Design Specification
@@ -35,7 +35,7 @@ Building an Artificial Intelligence (AI) / computer vision (CV) project for auto
 
 **3.1 Functional Requirements**
 
-  - **A. AI / CV Tools(Components):**
+  - **A. AI / Components:**
 
     The application must provide great performing computer vision tools that work well with C++ as well as Python. We will first analyze already existing open source tools like OpenCV, which is prebuilt with all the necessary techniques and algorithms to perform several image and video processing tasks. Further, the implementation of various necessary tools will be done to provide user with different data processing components.
 
@@ -126,29 +126,32 @@ We propose a distributed platform that provides build, development and deploymen
 
 **5.1 UI Manager:**
   - Provides a CV components toolbar, with drag and drop functionality to create a customized CV pipeline
+  - Provide a functionality for end user to choose components according to its requirement for the pipeline execution.
   - Redirects the requests to various services. 
+  - Display final output to the end users after the execution of the pipeline.
 
-
-**5.2 CV_Tools Manager:**
-  - Users can upload CV_Tool as zip file. The contents of zip file should be as follows.
+**5.2 Component Manager:**
+  - Users can upload Component as zip file. The contents of zip file should be as follows.
     ```
-    └── CV_Tool
+    └── Component
         ├── config.json
-        ├── predict.py
+        ├── utility.py
         ├── requriements.txt
         └── src
             └── src.py
     ```
-  - Wraps a node.js server with `/predict` endpoint to call `predict` function inside `predict.py` file.
+  - Wraps a node.js server with `/preprocess` endpoint to call `preprocess` function inside `utility.py` file.
 
 **5.3 Node Manager:**
-  - Creates a docker container for each of the services and CV_Tools deployed on the platform.
+  - First service to be initialised by the bootstrapper.
+  - Deploy all the services in the initial stage of bootstrapping process.
+  - Creates a docker container for each of the services and Components deployed on the platform.
   - Runs these containers on nodes with least load.
   - Performs load balancing.
 
 **5.4 Scheduler:**
-  - Generates a config.json using the pipeline CV_Tools specified by the end-user through UI.
-  - Execute the CV_Tool according to config.json by providing the input and fetching the output while checking the consistency i.e. output of one CV_Tool must match the input of next CV_Tool in the pipeline.
+  - Generates a config.json using the pipeline Components specified by the end-user through UI.
+  - Execute the Component according to config.json by providing the input and fetching the output while checking the consistency i.e. output of one Component must match the input of next Component in the pipeline.
   - Provides the end output of pipeline to the UI.
   - Scheduler will be based on dispatcher-worker model which is a variant of master-slave model.
   - Dispatcher will recieve execution requests and generates `config.json` file based on the recieved request. It then pushes the request onto the message queue.
