@@ -119,7 +119,7 @@ Throughout the project, we can divide it into phases in order to have modular, s
 We propose a distributed platform that provides build, development and deployment functionalities for different AI/CV Tools. Most data becomes useless just seconds after 1s it is generated, so having the lowest latency possible between the data and the decision is critical. With this platform, we bring AI preprocessing capabilities to edge gateway. The platform consists of following microservices.
 
 
-![alt text](https://github.com/Jasika16/Straw-Hats/blob/main/Assets/Images/System%20Architecture.png)
+![alt text](https://github.com/Jasika16/Straw-Hats/blob/main/Assets/Images/System%20Architecture.jpg)
 
 **Figure:** System Architecture
 
