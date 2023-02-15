@@ -149,7 +149,13 @@ We propose a distributed platform that provides build, development and deploymen
 **5.4 Scheduler:**
   - Generates a config.json using the pipeline CV_Tools specified by the end-user through UI.
   - Execute the CV_Tool according to config.json by providing the input and fetching the output while checking the consistency i.e. output of one CV_Tool must match the input of next CV_Tool in the pipeline.
-  - Provides the end output of pipeline to the UI 
+  - Provides the end output of pipeline to the UI.
+  - Scheduler will be based on dispatcher-worker model which is a variant of master-slave model.
+  - Dispatcher will recieve execution requests and generates `config.json` file based on the recieved request. It then pushes the request onto the message queue.
+  - We will use Apache Kafka for message queue.
+  - A PubSub architecture is supported by Apache Kafka, which means that users can publish and consume messages from a topic queue.
+
+  ![alt text](https://github.com/Jasika16/Straw-Hats/blob/main/Assets/Images/scheduler.png)
 
 **5.5 Nodes:**
   - The nodes are running containers of different microservices and CV Tools which are deployed on the platform.
