@@ -1,4 +1,3 @@
-scalable
 # Data Foundation Systems
 
 ## Software Requirements & Design Specification
