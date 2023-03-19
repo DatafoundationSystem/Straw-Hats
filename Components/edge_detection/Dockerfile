@@ -1,7 +1,17 @@
-FROM python:3
-# ENV PYTHONUNBUFFERED 1
-WORKDIR /web_app
+FROM alpine
+WORKDIR /Components
+
+# Install nodejs
+RUN apk add --update nodejs npm
+# Install python/pip
+ENV PYTHONUNBUFFERED=1
+RUN apk add --update --no-cache python3 && ln -sf python3 /usr/bin/python
+RUN python3 -m ensurepip
+RUN pip3 install --no-cache --upgrade pip setuptools
+
 COPY requirements.txt requirements.txt
 RUN pip3 install -r requirements.txt
 COPY . .
-CMD [ "python3", "-u", "app.py" ]
+
+# EXPOSE 20000
+CMD ["python", "-u", "utility.py"]
