@@ -10,7 +10,10 @@ RUN python3 -m ensurepip
 RUN pip3 install --no-cache --upgrade pip setuptools
 
 COPY . .
-RUN pip3 install -r requirements.txt
+RUN pip3 install -r ./app/requirements.txt
 
-# EXPOSE 20000
-CMD ["python", "-u", "utility.py"]
+
+RUN npm install
+
+EXPOSE 8080
+CMD [ "node", "server.js" ]
