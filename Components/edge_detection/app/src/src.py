@@ -4,7 +4,7 @@ import numpy as np
 
 def simple_edge_detection(image): 
    edges_detected = cv2.Canny(image , 100, 200) 
-   images = [image , edges_detected]
+   # images = [image , edges_detected]
    # location = [121, 122] 
    # for loc, edge_image in zip(location, images): 
    #    plt.subplot(loc) 
