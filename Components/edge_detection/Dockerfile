@@ -1,22 +1,14 @@
-FROM alpine
-WORKDIR .
+FROM node:10-alpine
 
-# Install nodejs
-RUN apk add --update nodejs npm
-# Install python/pip
-# ENV PYTHONUNBUFFERED=1
-# RUN apk add --update --no-cache python3 && ln -sf python3 /usr/bin/python
-# RUN python3 -m ensurepip
-# RUN pip3 install --no-cache --upgrade pip setuptools
+RUN apk add --no-cache python python-dev python3 python3-dev \
+    linux-headers build-base bash git ca-certificates && \
+    python3 -m ensurepip && \
+    rm -r /usr/lib/python*/ensurepip && \
+    pip3 install --upgrade pip setuptools==45 && \
+    if [ ! -e /usr/bin/pip ]; then ln -s pip3 /usr/bin/pip ; fi && \
+    rm -r /root/.cache
 
-RUN echo "http://dl-8.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories
-RUN apk --no-cache --update-cache add gcc gfortran python3 python3-dev py-pip build-base wget freetype-dev libpng-dev openblas-dev
-RUN ln -s /usr/include/locale.h /usr/include/xlocale.h
-# RUN pip install numpy
-
-COPY . .
-RUN pip3 install -r ./app/requirements.txt
+    
+RUN pip3 install numpy
+RUN pip3 install opencv-python
 RUN npm install
-
-EXPOSE 8080
-CMD [ "node", "server.js" ]
