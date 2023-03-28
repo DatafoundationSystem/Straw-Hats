@@ -11,6 +11,7 @@ app.get('/', (req, res) => {
 app.get('/preprocess', (req,res) => {
   const spawn = require("child_process").spawn;
   const pythonProcess = spawn('python',["app/utility.py", "test.jpg"]);
+  res.send('Edge Detection Complete')
 });
 
 app.listen(port, () => {
