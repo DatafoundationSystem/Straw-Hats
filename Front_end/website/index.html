@@ -152,15 +152,23 @@ https://templatemo.com/tm-563-seo-dream
               <div class="col-lg-8">
                 <div class="right-content">
                   <h4><a href="#">Upload Image</a></h4>
-                  <!-- <form action="/action_page.php"> -->
-                    <!-- <input type="file" id="myFile" name="filename" hidden/>
+                  <form method="POST" action="/upload" enctype=multipart/form-data> 
+                    <!-- <input type="file" id="myFile" name="filename" hidden/> 
                     <label class="upload-button" for="myFile">Browse</label>
                     <input type="submit" id="fileupload" type="file" name="fileupload" hidden/>
                     <label class="upload-button submit-button" for="sub" id="upload-button" onclick="uploadFile()">Upload</label> -->
-                  <!-- </form> -->
+                    <label class="form-label" for="customFile">Controller Type Upload</label>
+                    <input type="file" class="form-control" id="customFile" />
+                    <input id="button" type="submit" value="Submit">
+                  </form>
                   <!-- <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium dormque laudantium.</p> -->
+                  <!-- <form method="POST" action="/controller_type_upload" enctype=multipart/form-data>
+                    <label class="form-label" for="customFile">Controller Type Upload</label>
+                    <input type="file" class="form-control" id="customFile" />
+                    <input id="button" type="submit" value="Submit">
+                  </form>
                   <input type="file" id="fileInput">
-                  <button id="uploadButton">upload</button>
+                  <button id="uploadButton">upload</button> -->
                 </div>
               </div>
             </div>
