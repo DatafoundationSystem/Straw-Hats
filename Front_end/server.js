@@ -3,6 +3,7 @@ const path = require("path")
 const multer = require("multer")
 const Minio = require('minio')
 const app = express();
+// const popup = require('node-popup');   
 
 app.set("views",path.join(__dirname,"views"))
 app.set("view engine","ejs")
@@ -29,6 +30,9 @@ app.post("/upload", multer({storage: multer.memoryStorage()}).single("mypic"),fu
         
   minioClient.putObject('uploads', req.file.originalname, req.file.buffer, function(err, etag) {
     if (err) return console.log(err)
+    res.sendFile(__dirname + "/index.html");
+  
+    // popup.alert('Your File Uploaded');
     console.log('File uploaded successfully.')
   });
 })
