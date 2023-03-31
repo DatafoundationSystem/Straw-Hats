@@ -1,6 +1,7 @@
 const express = require("express");
 const path = require("path")
 const multer = require("multer")
+const Minio = require('minio')
 const app = express();
 
 app.set("views",path.join(__dirname,"views"))
@@ -41,6 +42,14 @@ var upload = multer({
 
 // mypic is the name of file attribute
 }).single("mypic"); 
+
+var minioClient = new Minio.Client({
+  endPoint: 'play.min.io',
+  port: 9000,
+  useSSL: true,
+  accessKey: 'Q3AM3UQ867SPQQA43P2F',
+  secretKey: 'zuf+tfteSlswRu7BJ86wekitnifILbZam1KYY3TG'
+})
 
 app.listen(3000, () => {
   console.log("Application started and Listening on port 3000");
