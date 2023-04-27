@@ -128,7 +128,7 @@
 
 
 function printEdge() {
-  let text1 = '&#x220E; Edge Detection';
+  let text1 = 'Edge Detection';
 
   var list_item = document.createElement("li");
   list_item.innerHTML = text1;
@@ -154,7 +154,7 @@ function printEdge() {
 
 
 function printObject() {
-  let text2 = '&#x220E; Object Detection';
+  let text2 = 'Object Detection';
 
   var list_item = document.createElement("li");
   list_item.innerHTML = text2;
