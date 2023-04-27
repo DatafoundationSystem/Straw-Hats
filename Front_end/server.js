@@ -2,10 +2,26 @@ const express = require("express");
 const path = require("path")
 const multer = require("multer")
 const Minio = require('minio')
+const mysql = require("mysql")
 const app = express();
 
 const port = process.env.PORT || 3000;
 
+var mysqlconnection = mysql.createConnection({
+  host:"dfs-node-db.c6zbhfwprabi.eu-north-1.rds.amazonaws.com",
+  user:"admin",
+  password:"dfsnjv123",
+  port:"3306",
+  timeout:6000
+});
+
+mysqlconnection.connect(function(err){
+  if(err){
+    console.log('Database connection failed:' + err.stack);
+    return;
+  }
+  console.log('Connected to database.');
+});
 
 var minioClient = new Minio.Client({
   endPoint: '127.0.0.1',
