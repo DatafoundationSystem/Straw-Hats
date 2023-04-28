@@ -3,6 +3,15 @@ const path = require("path")
 const multer = require("multer")
 const Minio = require('minio')
 const app = express();
+var cors = require('cors');
+
+app.use(function(req, res, next) {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Credentials', true);
+  next();
+});
 
 const port = process.env.PORT || 3000;
 
