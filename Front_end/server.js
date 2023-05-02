@@ -47,7 +47,16 @@ app.use(express.urlencoded({extended:true}))
 
 
 app.get('/', (req,res)=>{
-  if(req.cookies['access_token']) res.redirect('/home');
+  if(req.cookies['access_token']){
+    try{
+      jwt.verify(req.cookies['access_token'], 'SuperSecretKey');
+    }catch{
+      res.render('login.ejs', {msg: ""});
+      return;
+    }
+    res.redirect('/home');  
+    return;
+  } 
   res.render('login.ejs', {msg: ""});
 })
 
@@ -101,7 +110,11 @@ app.get("/home", (req, res) => {
     res.redirect('/');
   }else{
     // console.log(req.cookies['access_token']);
-    decoded = jwt.verify(req.cookies['access_token'], 'SuperSecretKey');
+    try{
+      decoded = jwt.verify(req.cookies['access_token'], 'SuperSecretKey');
+    }catch(err){
+      res.redirect('/');
+    } 
     console.log(decoded.username);
     let select_query = 'SELECT * FROM ?? WHERE ?? = ?';
     let query = mysql.format(select_query, ["dfs.users", "username", decoded.username]);
