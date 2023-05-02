@@ -12,14 +12,15 @@
     <div class="container">
       <div class="wrapper">
         <div class="title"><span>Login Form</span></div>
-        <form action="#">
+        <span style="padding: 2pt; color: red;" > <%= msg %></span>
+        <form action="/" method="post">
           <div class="row">
             <i class="fas fa-user"></i>
-            <input type="text" placeholder="Email or Phone" required>
+            <input type="text" name="user[name]" placeholder="Username" required>
           </div>
           <div class="row">
             <i class="fas fa-lock"></i>
-            <input type="password" placeholder="Password" required>
+            <input type="password" name="user[password]" placeholder="Password" required>
           </div>
           <div class="pass"><a href="#">Forgot password?</a></div>
           <div class="row button">
@@ -31,4 +32,7 @@
     </div>
 
   </body>
+  <script>
+
+  </script>
 </html>

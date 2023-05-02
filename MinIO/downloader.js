@@ -12,7 +12,7 @@ var minioClient = new Minio.Client({
 var size = 0
 minioClient.fGetObject('uploads', 'reducer.py', 'downloaded_reducer.py', function(err) {
 if (err) {
-    return console.log(err)
+    return console.log(err);
 }
-console.log('success')
+    console.log('success');
 })
