@@ -127,6 +127,31 @@ https://templatemo.com/tm-563-seo-dream
     </div>
   </div>
 
+  <!---------------------------------- Upload Component ----------------------------->
+  <% if( flag == "1" ){ %>
+    <div id="setup" class="our-services section">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-6 offset-lg-3">
+            <div class="section-heading wow bounceIn" data-wow-duration="1s" data-wow-delay="0.2s">
+              <!-- <h6>Our Services</h6> -->
+              <h2>Upload Component <span>Zip file</span></h2>
+              <form action="/bin/uploadDAMAsset" method="post" target="_blank" enctype="multipart/form-data">
+                <input type="file" id="inputFile" name="inputFile">
+                <br>
+                <input class="upload-button" type="submit" value="Submit">
+              </form>
+            
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% } else{ %>  
+    <div></div>
+ <% } %>
+  
+
   <!---------------------------------- Setup Pipeline ----------------------------->
   <div id="setup" class="our-services section">
     <div class="container">

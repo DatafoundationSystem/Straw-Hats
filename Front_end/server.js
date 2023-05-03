@@ -135,8 +135,14 @@ app.get("/home", (req, res) => {
       }
       // console.log(data[0]);
       if (data.length == 1){
-        console.log(1);
-        res.render('index.ejs');
+        console.log(data);
+        console.log(data[0].role);
+        if( data[0].role == 1 ){
+          res.render('index.ejs', { flag : "1" });
+        }
+        else{
+          res.render('index.ejs', { flag : "0" });
+        }
       }else{ 
         res.redirect('/')
       }
@@ -144,6 +150,7 @@ app.get("/home", (req, res) => {
   }
   // res.redirect('/');
 });
+
 
 app.post("/upload", multer({storage: multer.memoryStorage()}).single("mypic"),function (req, res, next) {
         
