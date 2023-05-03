@@ -156,7 +156,7 @@ app.post("/upload", multer({storage: multer.memoryStorage()}).single("mypic"),fu
         
   minioClient.putObject('uploads', req.file.originalname, req.file.buffer, function(err, etag) {
     if (err) return console.log(err);
-    res.render('index.ejs');
+    res.redirect('/home');
   
     // popup.alert('Your File Uploaded');
     console.log('File uploaded successfully.');

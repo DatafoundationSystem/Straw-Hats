@@ -23,7 +23,6 @@ if __name__ == '__main__':
     client.fget_object(
         "uploads", image_url, image_url,
     )
-
     preprocess( image_url )
 
     new_img="temp.jpg"

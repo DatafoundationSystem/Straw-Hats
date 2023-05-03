@@ -2,8 +2,6 @@ const express = require("express");
 const app = express();
 const Minio = require('minio')
 const axios = require('axios')
-// const popup = require('node-popup');   
-// app.use(express.static(path.join(__dirname + '/public')));
 const fetch = (url) => import('node-fetch').then(({default: fetch}) => fetch(url));
 
 app.use(express.json())
@@ -67,7 +65,7 @@ app.post("/postjson", function (req, res) {
           
           if(component_name=="Edge Detection"){
             sendData = {
-              file_name : "image.jpg"
+              file_name : "img1.png"
             }
       
             axios.post('http://127.0.0.1:8080/edge_detection', sendData)
@@ -78,20 +76,6 @@ app.post("/postjson", function (req, res) {
               console.log(error);
             });
           }
-
-          // if(component_name=="Object Detection"){
-          //   sendData = {
-          //     file_name : "image.jpg"
-          //   }
-      
-          //   axios.post('http://127.0.0.1:8080/object_detection', sendData)
-          //   .then(function (response) {
-          //     console.log(response);
-          //   })
-          //   .catch(function (error) {
-          //     console.log(error);
-          //   });
-          // }
           
       }
   
