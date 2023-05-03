@@ -14,6 +14,7 @@ app.get('/', (req, res) => {
 
 app.post('/edge_detection', (req,res) => {
   console.log(req.body)
+  
   file_name = req.body.file_name  
   const spawn = require("child_process").spawn;
   const pythonProcess = spawn('python3',["app/utility.py", file_name]);
