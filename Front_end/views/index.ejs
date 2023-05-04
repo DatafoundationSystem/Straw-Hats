@@ -11,7 +11,10 @@
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet">
 
-    <title>SEO Dream - Creative SEO HTML5 Template by TemplateMo</title>
+    <title>AI/CV Pipeline</title>
+    <link rel = "icon" href = 
+        "/images/eye.png" 
+        type = "image/x-icon">
 
     <!-- Bootstrap core CSS -->
     <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -340,8 +343,10 @@ https://templatemo.com/tm-563-seo-dream
 
                 <% for(var j=i*4; j < i*4 + add ; j++) {%>
                   
+                  <% var myText = mobj[0].cdata[j][1]; %>
+                  
                   <div class="col-lg-3">
-                    <div class="features-item first-feature wow fadeInUp" data-wow-duration="1s" data-wow-delay="0s" onclick="printEdge()">
+                    <div class="features-item first-feature wow fadeInUp" data-wow-duration="1s" data-wow-delay="0s" onclick="printPipeline( '<%= myText %>' )">
                       <div class="first-number number">
                         <h6><%= iter %> </h6>
                         <% iter = iter + 1; %>
@@ -644,7 +649,7 @@ https://templatemo.com/tm-563-seo-dream
           <div class="section-heading wow fadeInLeft" data-wow-duration="1s" data-wow-delay="0.3s">
             <h6>Data Foundation System</h6>
             <h2>Discover More About Our <em>Project</em></h2>
-            <p><a href="https://github.com/Jasika16/Straw-Hats" target="_blank">Github Page</a></p>
+            <p><a href="https://github.com/Jasika16/Straw-Hats" target="_blank">Github Page Link</a></p>
           </div>
         </div>
       </div>
@@ -820,7 +825,7 @@ https://templatemo.com/tm-563-seo-dream
                       <div class="icon">
                         <img src="/images/contact-icon-03.png" alt="location">
                       </div>
-                      <a href="#">26th Street, Digital Villa</a>
+                      <a href="#">International Institute of Information Technology Prof. C R Rao Road Gachibowli, Hyderabad 500 032. Telangana</a>
                     </li>
                   </ul>
                 </div>
@@ -836,9 +841,9 @@ https://templatemo.com/tm-563-seo-dream
     <div class="container">
       <div class="row">
         <div class="col-lg-12">
-          <p>Copyright © 2021 SEO Dream Co., Ltd. All Rights Reserved. 
+          <p>Copyright © 2023 Data Foundation System All Rights Reserved. 
           
-          <br>Web Designed by <a rel="nofollow" href="https://templatemo.com" title="free CSS templates">TemplateMo</a></p>
+          <br>Designed by <a rel="nofollow" href="" title="free CSS templates">Straw-Hats</a></p>
         </div>
       </div>
     </div>
