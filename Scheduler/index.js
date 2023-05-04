@@ -68,7 +68,7 @@ app.post("/postjson", function (req, res) {
               file_name : "img1.png"
             }
       
-            axios.post('http://127.0.0.1:8080/edge_detection', sendData)
+            axios.post('http://127.0.0.1:8080/run', sendData)
             .then(function (response) {
               console.log(response);
             })

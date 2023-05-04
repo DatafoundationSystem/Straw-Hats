@@ -1,7 +1,10 @@
+//Upload index.zip on minio before running this file
+
 const express = require("express");
 const app = express();
 const Minio = require('minio')
 var mysql = require('mysql')
+const fs = require('fs')
 const decompress = require("decompress");
 
 app.use(express.json())
@@ -28,9 +31,8 @@ app.get('/', (req,res)=>{
   res.send("Hello World.")
 });
 
-//note .zip file should have folder with same name
-
 app.post('/deploy', (req,res)=>{
+    // Json recieved from UI manager
     console.log(req.body);
     temp = req.body;
 
@@ -43,15 +45,27 @@ app.post('/deploy', (req,res)=>{
 
     var size = 0
 
+    // Component Zip file downloaded from minio
     minioClient.fGetObject('uploads', component_file_name, component_file_name, function(err) {
     if (err) {
       return console.log(err);
     }
       console.log('success');
     })
+
+
+    // Index Zip file downloaded from minio
+    minioClient.fGetObject('uploads', "index.zip", "index.zip", function(err) {
+      if (err) {
+        return console.log(err);
+      }
+        console.log('success');
+      })
+
     
     let destination = "../Components/"
 
+    //Decompressing the zip files
     setTimeout(function() {
         decompress(component_file_name, destination)
         .then((files) => {
@@ -60,16 +74,40 @@ app.post('/deploy', (req,res)=>{
         .catch((error) => {
           console.log(error);
         });    
-  }, 3000);
 
+        let temp = destination.concat(comp_folder[0])
+        decompress("index.zip", temp)
+        .then((files) => {
+          console.log(files);
+        })
+        .catch((error) => {
+          console.log(error);
+        });    
+
+      }, 3000);
+
+
+    // npm install command running inside the component  
+    setTimeout(function() {  
+      let temp = destination.concat(comp_folder[0])
+      const spawn = require('child_process').spawn;
+
+        spawn('npm', ['install'], {
+          cwd: temp,        // <--- 
+          shell: true,
+          stdio: 'inherit'
+        });
+
+      }, 6000);    
     
+
+    // Deploying the components  
+    setTimeout(function() {
+      temp = destination.concat(comp_folder[0])
+      runner_dest = temp.concat('/index.js')
+      require('child_process').fork(runner_dest);    
+    }, 20000);
     
-  setTimeout(function() {
-    temp = destination.concat(comp_folder[0])
-    runner_dest = temp.concat('/index.js')
-    require('child_process').fork(runner_dest);    
-}, 5000);
-  
     res.send("Hello World.")
 
 });
