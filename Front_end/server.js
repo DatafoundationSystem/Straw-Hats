@@ -5,7 +5,10 @@ const Minio = require('minio')
 const ejs = require('ejs')
 const mysql = require("mysql")
 const jwt = require('jsonwebtoken')
+const axios = require('axios')
 const cookie_parser = require('cookie-parser')
+const axios = require('axios')
+
 
 const app = express();
 var cors = require('cors');
@@ -40,8 +43,8 @@ var minioClient = new Minio.Client({
   endPoint: '127.0.0.1',
   port: 9000,
   useSSL: false,
-  accessKey: 'EitPADwoAUvkzhs6',
-  secretKey: 'g82ahUIxSAhtIJeCoLWTV1YrONFpjTop'
+  accessKey: '9QKx0lFAgwt0PBqi',
+  secretKey: 'vJ18iMajpBDKbuac8okG9W8b1okRFRT4'
 });
 
 app.listen(port, () => {
@@ -91,7 +94,7 @@ app.post("/", function(req,res){
       if(data[0].pass == password){
         // set cookie
         console.log(2);
-        var token = jwt.sign({username : username}, "SuperSecretKey", {expiresIn : 86400});
+        var token = jwt.sign({username : username, userid:data[0].user_id}, "SuperSecretKey", {expiresIn : 86400});
         console.log(token);
         
         res
@@ -137,34 +140,242 @@ app.get("/home", (req, res) => {
       if (data.length == 1){
         console.log(data);
         console.log(data[0].role);
-        if( data[0].role == 1 ){
-          res.render('index.ejs', { flag : "1" });
-        }
-        else{
-          res.render('index.ejs', { flag : "0" });
-        }
+
+        let comp_select_query = 'SELECT * FROM ??';
+        let component_query = mysql.format( comp_select_query, ["dfs.components"]);
+        let user_role = data[0].role;
+
+
+        mysqlconnection.query(component_query, (err,data)=>{
+          if(err){
+            console.log(err);
+            return;
+          }
+
+          let component_data = []
+
+          for (let i = 0; i < data.length; i++) {
+            // text += "The number is " + i + "<br>";
+            let temp = [
+              data[i].id, //cid
+              data[i].name, //cname
+              data[i].description //cdesc
+            ]
+            component_data.push(temp);
+          }
+          console.log(component_data);
+          if( user_role == 1 ){
+            const obj = {
+              flag:"1",
+              cdata:component_data
+            };
+            // res.render('index.ejs', {obj});
+            var multiObj = [{flag:"1", cdata: component_data}];
+            res.render('index.ejs', { mobj: multiObj } );
+          }
+          else{
+            const obj = {
+              flag:"0",
+              cdata:component_data
+            };
+            // res.render('index.ejs', {obj});
+            var multiObj = [{flag:"0", cdata: component_data}];
+            res.render('index.ejs', { mobj: multiObj } );
+            //res.render('index.ejs', data: {flag:"0", cdata: component_data});
+          }
+        });
+
+
       }else{ 
         res.redirect('/')
       }
     });
+
+    // let comp_query = 'SELECT * FROM ?? ';
+    // let comp_ret_query = mysql.formal( comp_query, [ "components" ] );
   }
   // res.redirect('/');
 });
 
 
 app.post("/upload", multer({storage: multer.memoryStorage()}).single("mypic"),function (req, res, next) {
-        
-  minioClient.putObject('uploads', req.file.originalname, req.file.buffer, function(err, etag) {
+  console.log(req.file);
+  try{
+    decoded = jwt.verify(req.cookies['access_token'], 'SuperSecretKey');
+  }catch(err){
+    res.redirect('/');
+  } 
+  console.log(decoded);
+  let query = 'SELECT * FROM dfs.operation ORDER BY id DESC';
+  mysqlconnection.query(query, (err,data)=>{
+    if(err){
+      console.log(err);
+      res.send("Error uploading image.");
+    }
+    console.log(data[0]);
+    var oid = data[0].id+1;
+    var uid = decoded.userid;
+    var imgpath = String(oid) + '/' + req.file.originalname;
+    let insert_query = 'INSERT INTO dfs.operation(id,user_id,component_id,step,input,output)VALUES(?,?,0,0,?,?)';
+    insert_query = mysql.format(insert_query, [oid,uid,imgpath,imgpath]);
+    console.log(insert_query);
+    mysqlconnection.query(insert_query, (err,data)=>{
+      if(err){
+        console.log(err);
+        res.send("Error uploading image");
+      }
+      minioClient.putObject('uploads', imgpath, req.file.buffer, function(err, etag) {
+        if (err) return console.log(err);
+        res.redirect('/home');
+      
+        // popup.alert('Your File Uploaded');
+        console.log('File uploaded successfully.');
+        console.log(etag);
+      });
+    });
+    
+  });
+  
+});
+
+app.post("/compUpload", multer({storage: multer.memoryStorage()}).single("inputFile"),function (req, res, next) {
+  console.log("Comp Upload Req:");
+  console.log( req.body.cname );
+  console.log( req.body.description );    
+  
+  let comp_name = req.body.cname;
+  let comp_desc = req.body.description;
+  
+  minioClient.putObject('comp-upload', req.file.originalname, req.file.buffer, function(err, etag) {
     if (err) return console.log(err);
     res.redirect('/home');
   
+    console.log("=============================================")    
     // popup.alert('Your File Uploaded');
-    console.log('File uploaded successfully.');
+    console.log('Component Zip File uploaded successfully.');
+
+    if(!req.cookies['access_token']){
+      console.log("Cookie not found.")
+      res.redirect('/');
+    }else{
+      // console.log(req.cookies['access_token']);
+      try{
+        decoded = jwt.verify(req.cookies['access_token'], 'SuperSecretKey');
+      }catch(err){
+        res.redirect('/');
+      } 
+      console.log("USERNAME:");
+      console.log(decoded.username);
+    
+      console.log("FILENAME:");
+      console.log( req.file.originalname )
+
+      let select_query = 'SELECT * FROM ?? WHERE ?? = ?';
+      let uid_query = mysql.format(select_query, ["dfs.users", "username", decoded.username]);
+
+      mysqlconnection.query(uid_query, (err,data)=>{
+        if(err){
+          console.log(err);
+          return;
+        }
+        // console.log(data[0]);
+        if (data.length == 1){
+          console.log("user_id");
+          console.log(data[0].user_id);
+          let uid = data[0].user_id;
+
+          let url_temp = "url";
+          let insert_query = 'INSERT INTO ?? ( name, url, user_id, description, object_name ) VALUES( ?, ?, ?, ?, ? )';
+          let comp_query = mysql.format(insert_query, ["dfs.components", comp_name, url_temp, uid, comp_desc, req.file.originalname ]);
+
+          console.log( "COMP QUERY:" )
+          console.log( comp_query );
+
+          mysqlconnection.query( comp_query, (err,data)=>{
+            if(err){
+              console.log(err);
+              return;
+            }
+            // console.log(data[0]);
+            console.log( "Component updated in Database successfully !!" );
+
+
+            // Sending data to node manager =========================================
+            sendData = {
+              "object_name": req.file.originalname,
+              "c_name" : comp_name,
+              "c_desc" : comp_desc,
+              "user_id": uid
+            }
+      
+            axios.post('http://127.0.0.1:8085/deploy', sendData)
+            .then(function (response) {
+              console.log(response);
+            })
+            .catch(function (error) {
+              console.log(error);
+            });
+
+
+            // SEND data to index.js ============================================
+            let select_query2 = 'SELECT * FROM ?? WHERE ?? = ?';
+            let cid_query = mysql.format(select_query, ["dfs.components", "name", comp_name]);
+            mysqlconnection.query(cid_query, (err,data)=>{
+              if(err){
+                console.log(err);
+                return;
+              }
+              console.log( "CID: " )
+              console.log( data[0].id );
+              //res.render('index.ejs', {flag:"1"});
+              res.render('/home');
+            });
+            
+
+          });
+
+        }else{ 
+          res.redirect('/')
+        }
+      });
+
+      
+    }
+
+    
   });
 })
 
+
+
 app.post("/postjson", function (req, res) {
-        
-  console.log(req.body);
-  res.send("Hello")
-})
+  try{
+    decoded = jwt.verify(req.cookies['access_token'], 'SuperSecretKey');
+  }catch(err){
+    res.redirect('/');
+  } 
+  console.log(decoded);
+  let query = 'SELECT * FROM dfs.operation WHERE user_id = ? ORDER BY id DESC';
+  query = mysql.format(query, [decoded.userid]);
+  console.log(query);
+  mysqlconnection.query(query, (err,data)=>{
+    if(err){
+      console.log(err);
+      res.send("Error sending pipeline.");
+    }
+    console.log(req.body);
+    var imgpath = String(data[0].id) + '/' + req.body.image;
+    console.log(data[0]);
+    sendData = {
+      oid : data[0].id,
+      user_id: data[0].id,
+      imgpath: imgpath,
+      pipeline: req.body.items
+    };
+    axios.post('http://127.0.0.1:8081/createPipeline',sendData)
+    .then((res => console.log("response recieved")))
+    .catch(err => console.log(err));
+  });
+
+  res.send({msg:"Hello"});
+});

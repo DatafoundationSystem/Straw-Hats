@@ -16,7 +16,7 @@ var file = 'reducer.py';
 // console.log("1");
 
 // Make a bucket called europetrip.
-// minioClient.makeBucket('europetrip', 'us-east-1', function(err) {
+// minioClient.makeBucket('CompUpload', 'us-east-1', function(err) {
 //     if (err) return console.log(err)
 
 //     console.log('Bucket created successfully in "us-east-1".')

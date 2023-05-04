@@ -127,6 +127,31 @@
 })(window.jQuery);
 
 
+function printPipeline( argvs ) {
+  let text1 = argvs;
+
+  var list_item = document.createElement("li");
+  list_item.innerHTML = text1;
+  
+  const box = document.getElementById('comp-list');
+  box.appendChild( list_item );
+
+  var button = document.createElement( "button" );
+  list_item.setAttribute( "id", "lid" );
+  list_item.appendChild( button );
+
+  button.setAttribute( "id", "bid" );
+  button.innerHTML = "Remove"
+  button.addEventListener('click', () => {
+    list_item.remove();
+    count = count - 1;
+  });
+
+  const hide_text = document.getElementById('list-text');
+  hide_text.style.display='none';
+
+}
+
 function printEdge() {
   let text1 = 'Edge Detection';
 
