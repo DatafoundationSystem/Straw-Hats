@@ -128,18 +128,29 @@ https://templatemo.com/tm-563-seo-dream
   </div>
 
   <!---------------------------------- Upload Component ----------------------------->
-  <% if( flag == "1" ){ %>
+  
+
+
+  <% if( mobj[0].flag == "1" ){ %>
     <div id="setup" class="our-services section">
       <div class="container">
         <div class="row">
           <div class="col-lg-6 offset-lg-3">
             <div class="section-heading wow bounceIn" data-wow-duration="1s" data-wow-delay="0.2s">
-              <!-- <h6>Our Services</h6> -->
+              
               <h2>Upload Component <span>Zip file</span></h2>
-              <form action="/bin/uploadDAMAsset" method="post" target="_blank" enctype="multipart/form-data">
+              <form action="/compUpload" method="post" enctype="multipart/form-data">
+                <br>
                 <input type="file" id="inputFile" name="inputFile">
                 <br>
+                <br>
+                <input type="text" name="cname" id="cname" placeholder="Enter Component Name" autocomplete="on">
+                <br>
+                <br>
+                <textarea name="description" type="text" class="form-control" id="description" placeholder="Enter Component Description" required=""></textarea>  
+                <br>
                 <input class="upload-button" type="submit" value="Submit">
+                
               </form>
             
             </div>
@@ -304,7 +315,54 @@ https://templatemo.com/tm-563-seo-dream
   <div id="features" class="features section">
     <div class="container">
       <div class="row">
-        <div class="col-lg-12">
+
+        <% var len = mobj[0].cdata.length ; %>
+        <% var rem = len % 4 ; %>
+        <% var rows = 0 ; %>
+        <% if ( len > 4 ) { %>
+          <% rows = 1; %>
+        <% } %>
+
+        <% var iter = 1; %>
+        <% for (var i=0; i <= rows ;  i++ ) { %>
+          <div class="col-lg-12">
+            <div class="features-content">
+              <div class="row">
+
+                <% var add = 4 ; %>
+                <% if ( rem != 0 && i == rows ) { %>
+                  <% add = len % 4; %>
+                <%} else { %>
+                  <% add = 4; %>
+                <% } %>
+
+                
+
+                <% for(var j=i*4; j < i*4 + add ; j++) {%>
+                  
+                  <div class="col-lg-3">
+                    <div class="features-item first-feature wow fadeInUp" data-wow-duration="1s" data-wow-delay="0s" onclick="printEdge()">
+                      <div class="first-number number">
+                        <h6><%= iter %> </h6>
+                        <% iter = iter + 1; %>
+                      </div>
+                      <div class="icon"></div>    
+                      <h4><%= mobj[0].cdata[j][1] %></h4>
+                      <div class="line-dec"></div>
+                      <p><%= mobj[0].cdata[j][2] %></p>
+                    </div>
+                  </div>
+                <% } %>
+                
+                <% len = len - 4; %>
+
+              </div>
+            </div>
+          </div>
+
+        <% } %>
+
+        <!-- <div class="col-lg-12">
           <div class="features-content">
             <div class="row">
               <div class="col-lg-3">
@@ -354,6 +412,7 @@ https://templatemo.com/tm-563-seo-dream
             </div>
           </div>
         </div>
+
         <div class="col-lg-12">
           <div class="features-content">
             <div class="row">
@@ -403,12 +462,14 @@ https://templatemo.com/tm-563-seo-dream
               </div>
             </div>
           </div>
-        </div>
+        </div> -->
+
         <div class="col-lg-12">
           <div class="main-green-button scroll-to-section View-Pipeline">
             <a href="#yourpipeline">View Pipeline</a>
           </div>
         </div>
+        
         <!-- <div class="col-lg-12">
           <div class="skills-content">
             <div class="row">
@@ -816,6 +877,8 @@ https://templatemo.com/tm-563-seo-dream
         .then(res => console.log(res));
     }
 
+    // CV Toolbar
+    
   </script>
 
 </body>
