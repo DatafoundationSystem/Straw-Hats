@@ -11,7 +11,7 @@ app.use(express.json())
 
 //SQL Connection
 var mysql = require('mysql');
-var connection = mysql.createConnection({
+var mysqlconnection = mysql.createConnection({
   host     : "dfs-node-db.c6zbhfwprabi.eu-north-1.rds.amazonaws.com",
   user     : "admin",
   password : "dfsnjv123",
@@ -19,7 +19,13 @@ var connection = mysql.createConnection({
   timeout  : 60000
 });
 
-
+mysqlconnection.connect(function(err){
+  if(err){
+    console.log('Database connection failed:' + err.stack);
+    return;
+  }
+  console.log('Connected to database.');
+});
 
 // Resolving CORS Error
 var cors = require('cors');
@@ -41,71 +47,105 @@ app.get('/', (req,res)=>{
     res.send("Hello World.")
 });
 
-app.post("/postjson", function (req, res) {
+app.post("/createPipeline", function (req, res) {
         
+  // console.log(req.body);
+  console.log(req.headers);
   console.log(req.body);
+  var step = 1;
+  var ip_path = req.body.imgpath;
+  for(var comp of req.body.pipeline){
+    console.log(comp);
+    let query = 'SELECT * FROM dfs.components WHERE name = ?';
+    console.log(comp['name']);
+    query = mysql.format(query, [comp['name']]);
+    console.log(query);
+    mysqlconnection.query(query, (err,data)=>{
+      if(err){
+        console.log(err);
+        res.send({msg:"Error"});
+      }
+      sendData = {
+        file_name:ip_path,
+        oid:req.body.oid,
+        step:step
+      };
+      ip_path = String(req.body.oid) + '/' + String(step) + '-op.jpg' ;
+      step+=1;
+      console.log(data[0].url);
+      console.log(sendData);
+      axios.post(data[0].url, sendData)
+      .then(function (response) {
+        console.log("Response Recieved");
+        
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+    })
+  }
 
-  connection.connect(function(err) {
-    if (err) {
-      console.error('Database connection failed: ' + err.stack);
-      return;
-    }
+  // mysqlconnection.connect(function(err) {
+  //   if (err) {
+  //     console.error('Database connection failed: ' + err.stack);
+  //     return;
+  //   }
   
-    console.log('Connected to database.');
+  //   console.log('Connected to database.');
   
-    connection.query('SELECT * FROM dfs.components WHERE user_id = "1";', function(err,result,fields){
-      if(err)console.log(err);
-      if(result)
+  //   connection.query('SELECT * FROM dfs.components WHERE user_id = "1";', function(err,result,fields){
+  //     if(err)console.log(err);
+  //     if(result)
   
-      for(let i=0;i<result.length;i++){
-        // component_name = result[i]["name"]
-        console.log(result[i]["name"]);
+  //     for(let i=0;i<result.length;i++){
+  //       // component_name = result[i]["name"]
+  //       console.log(result[i]["name"]);
         
       
       
-          component_name = result[i]["name"]
+  //         component_name = result[i]["name"]
           
-          if(component_name=="Edge Detection"){
-            sendData = {
-              file_name : "image.jpg"
-            }
+  //         if(component_name=="Edge Detection"){
+  //           sendData = {
+  //             file_name : "image.jpg"
+  //           }
       
-            axios.post('http://127.0.0.1:8080/edge_detection', sendData)
-            .then(function (response) {
-              console.log(response);
-            })
-            .catch(function (error) {
-              console.log(error);
-            });
-          }
+  //           axios.post('http://127.0.0.1:8080/edge_detection', sendData)
+  //           .then(function (response) {
+  //             console.log(response);
+  //           })
+  //           .catch(function (error) {
+  //             console.log(error);
+  //           });
+  //         }
 
-          // if(component_name=="Object Detection"){
-          //   sendData = {
-          //     file_name : "image.jpg"
-          //   }
+  //         // if(component_name=="Object Detection"){
+  //         //   sendData = {
+  //         //     file_name : "image.jpg"
+  //         //   }
       
-          //   axios.post('http://127.0.0.1:8080/object_detection', sendData)
-          //   .then(function (response) {
-          //     console.log(response);
-          //   })
-          //   .catch(function (error) {
-          //     console.log(error);
-          //   });
-          // }
+  //         //   axios.post('http://127.0.0.1:8080/object_detection', sendData)
+  //         //   .then(function (response) {
+  //         //     console.log(response);
+  //         //   })
+  //         //   .catch(function (error) {
+  //         //     console.log(error);
+  //         //   });
+  //         // }
           
-      }
+  //     }
   
-    });
+  //   });
   
   
-    connection.end();
-  });
+  //   connection.end();
+  // });
   
 
 
 
 
-  res.send("Hello")
+  res.send({msg:"Hello"});
 });
 
 
