@@ -198,7 +198,7 @@ https://templatemo.com/tm-563-seo-dream
                     <label class="upload-button submit-button" for="sub" id="upload-button" onclick="uploadFile()">Upload</label> -->
                     <!-- <label class="form-label" for="customFile">Controller Type Upload</label> -->
                     <input type="file" class="form-control" id="customFile" name="mypic" />
-                    <input id="button" type="submit" value="Submit">
+                    <input id="button" type="submit" value="Submit" onclick="seturl()">
                   </form>
                   <!-- <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium dormque laudantium.</p> -->
                   <!-- <form method="POST" action="/controller_type_upload" enctype=multipart/form-data>
@@ -856,35 +856,58 @@ https://templatemo.com/tm-563-seo-dream
   <script src="/js/animation.js"></script>
   <script src="/js/imagesloaded.js"></script>
   <script src="/js/custom.js"></script>
-  <script>
-    var url = "";
-    function sendPipeline(){
-      sendData = {
-        items : []
-      };
-      listItems = $("#comp-list").find("li").each(function(){
-        var product = $(this).get(0).innerHTML;
-        sendData.items.push({
-          name : product.split('<')[0]
-        });
-        // console.log(product);
-        // rest of code.
-      })
-      console.log(sendData);
-      fetch('http://127.0.0.1:8081/postjson', {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json, text/plain, */*',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(sendData)
-      }).then(res => res.json())
-        .then(res => console.log(res));
+  
+</body>
+<script>
+  // var url = "";
+  function sendPipeline(){
+    var imageFlag = (localStorage.getItem('image') === null);
+    if(imageFlag){
+      alert('Upload image first');
+      return;
     }
+    sendData = {
+      items : [],
+      image: localStorage.getItem('image')
+    };
+    listItems = $("#comp-list").find("li").each(function(){
+      var product = $(this).get(0).innerHTML;
+      sendData.items.push({
+        name : product.split('<')[0]
+      });
+      // console.log(product);
+      // rest of code.
+    })
+    console.log(sendData);
+    fetch('http://127.0.0.1:3000/postjson', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json, text/plain, */*',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(sendData)
+    }).then(res => res.json())
+      .then(res => {
+        console.log(res);
+        // localStorage.removeItem('image');
+      });
+    
+  }
+
+  function seturl(){
+    var fileInput = document.getElementById('customFile');   
+    var filename = fileInput.files[0].name;
+    console.log(typeof filename);
+    console.log(filename);
+    try{
+      localStorage.setItem('image',filename);
+    }catch(err){
+      alert(err);
+    }
+  }
 
     // CV Toolbar
     
   </script>
 
-</body>
 </html>

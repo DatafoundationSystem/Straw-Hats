@@ -2,11 +2,11 @@ import sys
 from minio import Minio
 from minio.error import S3Error
 
-def preprocess(image_url):
+def preprocess():
     from src.src import simple_edge_detection, cv2
-    image = cv2.imread(image_url, 0)
+    image = cv2.imread("ip.jpg", 0)
     img = simple_edge_detection(image)
-    cv2.imwrite('edge_detected.jpg', img) 
+    cv2.imwrite("op.jpg", img) 
     
 if __name__ == '__main__':
     
@@ -14,18 +14,19 @@ if __name__ == '__main__':
         # "play.min.io",
         "127.0.0.1:9000",
         secure=False,
-        access_key="EitPADwoAUvkzhs6",
-        secret_key="g82ahUIxSAhtIJeCoLWTV1YrONFpjTop",
+        access_key="RzRZkFomebQ1QHLU",
+        secret_key="m2593hGdtyAHRdmqcTu8erPUf2wSn0bx",
     )
 
     image_url = sys.argv[1]
-
+    # print(image_url)
     client.fget_object(
-        "uploads", image_url, image_url,
+        "uploads", image_url, "ip.jpg",
     )
-    preprocess( image_url )
 
-    new_img="temp.jpg"
+    new_img=sys.argv[2]
+    preprocess()
+
     client.fput_object(
-        "uploads", new_img, "edge_detected.jpg",
+        "uploads", new_img, "op.jpg",
     )

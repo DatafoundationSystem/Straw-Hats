@@ -12,11 +12,15 @@ app.get('/', (req, res) => {
 })
 
 
-app.post('/edge_detection', (req,res) => {
+app.post('/run', (req,res) => {
   console.log(req.body)
-  file_name = req.body.file_name  
+  var ip_path = req.body.file_name  
+  var op_path = String(req.body.oid) + '/' + String(req.body.step) + '-op.jpg' 
+  console.log(op_path); 
   const spawn = require("child_process").spawn;
-  const pythonProcess = spawn('python3',["app/utility.py", file_name]);
+  const pythonProcess = spawn('python3',["app/utility.py", ip_path, op_path]);
+  pythonProcess.stdout.pipe(process.stdout);
+
   res.send('Edge Detection Complete')
 });
 
