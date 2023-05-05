@@ -53,7 +53,10 @@ app.post("/createPipeline", function (req, res) {
   var step = 1;
   var ip_path = req.body.imgpath;
   for(var comp of req.body.pipeline){
-    console.log(comp);
+    setTimeout(function temp(){
+      console.log("------");
+      console.log(comp);
+    }, step*10000);
     let query = 'SELECT * FROM dfs.components WHERE name = ?';
     console.log(comp['name']);
     query = mysql.format(query, [comp['name']]);
@@ -82,9 +85,7 @@ app.post("/createPipeline", function (req, res) {
       });
       return;
     });
-    setTimeout(function temp(){
-      console.log("------");
-    }, 5000);
+    
   }
 
   res.send({msg:"Hello"});
