@@ -135,19 +135,20 @@ https://templatemo.com/tm-563-seo-dream
 
 
   <% if( mobj[0].flag == "1" ){ %>
-    <div id="setup" class="our-services section">
-      <div class="container">
+    <div class="upload-comp-class" id="setup" class="our-services section">
+      <div class="container inner-comp">
         <div class="row">
           <div class="col-lg-6 offset-lg-3">
             <div class="section-heading wow bounceIn" data-wow-duration="1s" data-wow-delay="0.2s">
               
-              <h2>Upload Component <span>Zip file</span></h2>
+              <h2>Upload Component <span style="color:#0c1ea8;">Zip file</span></h2>
               <form action="/compUpload" method="post" enctype="multipart/form-data">
                 <br>
                 <input type="file" id="inputFile" name="inputFile">
                 <br>
                 <br>
-                <label>Component Name:&nbsp;&nbsp;&nbsp;</label><input type="text" name="cname" id="cname" placeholder="Enter Component Name" autocomplete="on">
+                <label><b>Component Name:</b>&nbsp;&nbsp;&nbsp;</label>
+                <input type="text" name="cname" id="cname" placeholder="Enter Component Name" autocomplete="on">
                 <br>
                 <br>
                 <textarea name="description" type="text" class="form-control" id="description" placeholder="Enter Component Description" required=""></textarea>  
