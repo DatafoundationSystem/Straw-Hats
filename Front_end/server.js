@@ -7,7 +7,7 @@ const mysql = require("mysql")
 const jwt = require('jsonwebtoken')
 const axios = require('axios')
 const cookie_parser = require('cookie-parser')
-const axios = require('axios')
+// const axios = require('axios')
 
 
 const app = express();
@@ -43,8 +43,8 @@ var minioClient = new Minio.Client({
   endPoint: '127.0.0.1',
   port: 9000,
   useSSL: false,
-  accessKey: '9QKx0lFAgwt0PBqi',
-  secretKey: 'vJ18iMajpBDKbuac8okG9W8b1okRFRT4'
+  accessKey: 'EitPADwoAUvkzhs6',
+  secretKey: 'g82ahUIxSAhtIJeCoLWTV1YrONFpjTop'
 });
 
 app.listen(port, () => {
@@ -372,7 +372,7 @@ app.post("/postjson", function (req, res) {
       imgpath: imgpath,
       pipeline: req.body.items
     };
-    axios.post('http://127.0.0.1:8081/createPipeline',sendData)
+    axios.post('http://127.0.0.1:8000/createPipeline',sendData)
     .then((res => console.log("response recieved")))
     .catch(err => console.log(err));
   });
