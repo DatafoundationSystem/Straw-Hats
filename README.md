@@ -178,6 +178,6 @@ We propose a distributed platform that provides build, development and deploymen
 
 **ER Diagram**
 
-![alt text](https://github.com/Jasika16/Straw-Hats/blob/main/Assets/Images/ER%20Diagram.png)
+![alt text](https://github.com/Jasika16/Straw-Hats/blob/main/Assets/Images/ER_Diagram_DFS.png)
 
 **Figure:** ER Diagram
