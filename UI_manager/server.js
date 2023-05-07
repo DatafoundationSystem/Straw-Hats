@@ -379,3 +379,69 @@ app.post("/postjson", function (req, res) {
 
   res.send({msg:"Hello"});
 });
+
+
+app.get("/viewResult", (req, res) => {
+    //res.render('result.ejs');
+    let op_id = 5;
+    let query = 'SELECT * FROM dfs.operation WHERE id = ? ORDER BY step';
+    query = mysql.format(query, [op_id]);
+    console.log(query);
+
+    let send_data = []
+    
+    mysqlconnection.query(query, (err,data)=>{
+      if(err){
+        console.log(err);
+        res.send("Error sending operation.");
+      }
+      console.log( data );
+      
+      for(var i = 0; i < data.length ; i++){
+
+        let cname_query = 'SELECT name FROM dfs.components WHERE id = ?';
+        cname_query = mysql.format( cname_query, [ data[i].component_id ] );
+        
+        let oid = data[i].id;
+        let step = data[i].step;
+        let image_name = data[i].output;
+
+        mysqlconnection.query( cname_query, (err,data1)=>{
+          if(err){
+            console.log(err);
+            res.send("Error sending component name.");
+          }
+          //console.log( data1[0].name );
+          //console.log( data[i].step );
+
+          let image_path = '/display/' + image_name;
+          let cur_data = [
+            oid, // operation id
+            step, // step
+            image_path, // image name
+            data1[0].name // component name
+          ]
+          send_data.push( cur_data );
+
+          let local_path = '/public' + image_path;
+          // download files from mino to local storage ===============================
+          minioClient.fGetObject( 'uploads/' , image_name, local_path, function(err) {
+            if (err) {
+                return console.log(err);
+            }
+                console.log('success in file download');
+            })
+
+        });
+      }
+      
+      setTimeout(function temp(){
+        console.log( send_data );
+        console.log( send_data[0][2] );
+        console.log("========== Data Send to front end =============");
+        res.render('result.ejs', { oper : send_data } );
+      }, 2000);
+
+
+    });
+});

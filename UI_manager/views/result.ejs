@@ -25,7 +25,8 @@
     <link rel="stylesheet" href="/css/main.css">
     <link rel="stylesheet" href="/css/animated.css">
     <link rel="stylesheet" href="/css/owl.css">
-<!--
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <!--
 
 TemplateMo 563 SEO Dream
 
@@ -50,7 +51,7 @@ https://templatemo.com/tm-563-seo-dream
   </div>
   <!-- ***** Preloader End ***** -->
 
-  <!-- ***** Header Area Start ***** -->
+  <!-- *****==================== Header Area Start ========================== ***** -->
   <header class="header-area header-sticky wow slideInDown" data-wow-duration="0.75s" data-wow-delay="0s">
     <div class="container">
       <div class="row">
@@ -119,6 +120,92 @@ https://templatemo.com/tm-563-seo-dream
     </div>
   </div>
 
+
+  <!-- *****==================== Slide Show Results ========================== ***** -->
+  <div id="results" class="our-services section">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-6 offset-lg-3">
+          <div class="section-heading wow bounceIn" data-wow-duration="1s" data-wow-delay="0.2s">
+            <h2>Pipeline Output <span>Stepwise</span></h2>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  
+  <div class="w3-content w3-display-container">
+  
+    <% var len = oper.length ; %>
+    <% for(var i=0 ; i < len ; i++ ) {%>
+
+        <% var slideNum = oper[i][1] ; %>
+        <% var slideText = oper[i][3] ; %>
+        <% var image_path = oper[i][2] ; %>
+        <div class="w3-display-container mySlides">
+            <img src=<%= image_path %> style="width:100%">
+            <div class="w3-display-topleft w3-large w3-container w3-padding-16 w3-black">
+                Step <%= slideNum %>: <%= slideText %>
+            </div>
+        </div>
+
+    <% } %>
+    <!-- <div class="w3-display-container mySlides">
+        <img src="/display/img2.jpg" style="width:100%">
+        <div class="w3-display-topleft w3-large w3-container w3-padding-16 w3-black">
+            Beautiful Mountains
+        </div>
+    </div>
+    
+    <div class="w3-display-container mySlides">
+        <img src="/display/1-op.jpg" style="width:100%">
+        <div class="w3-display-topleft w3-large w3-container w3-padding-16 w3-black">
+            Beautiful Mountains
+        </div>
+    </div>
+    
+    <div class="w3-display-container mySlides">
+        <img src="/display/2-op.jpg" style="width:100%">
+        <div class="w3-display-topleft w3-large w3-container w3-padding-16 w3-black">
+        Beautiful Mountains
+        </div>
+    </div>
+    
+    <div class="w3-display-container mySlides">
+        <img src="/display/3-op.jpg" style="width:100%">
+        <div class="w3-display-topleft w3-large w3-container w3-padding-16 w3-black">
+            Beautiful Mountains
+        </div>
+    </div> -->
+
+    
+    
+    <button class="w3-button w3-display-left w3-black" onclick="plusDivs(-1)">&#10094;</button>
+    <button class="w3-button w3-display-right w3-black" onclick="plusDivs(1)">&#10095;</button>
+  
+  </div>
+  
+  <script>
+    var slideIndex = 1;
+    showDivs(slideIndex);
+    
+    function plusDivs(n) {
+        showDivs(slideIndex += n);
+    }
+    
+    function showDivs(n) {
+        var i;
+        var x = document.getElementsByClassName("mySlides");
+        if (n > x.length) {slideIndex = 1}
+        if (n < 1) {slideIndex = x.length}
+        for (i = 0; i < x.length; i++) {
+        x[i].style.display = "none";  
+        }
+        x[slideIndex-1].style.display = "block";  
+    }
+  </script>
+  
 
   <footer>
     <div class="container">
