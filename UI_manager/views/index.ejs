@@ -67,7 +67,7 @@ https://templatemo.com/tm-563-seo-dream
               <li class="scroll-to-section"><a href="#setup">Setup Pipeline</a></li>
               <li class="scroll-to-section"><a href="#toolbar">CV Toolbar</a></li>
               <li class="scroll-to-section"><a href="#yourpipeline">Your Pipeline</a></li>
-              <li class="scroll-to-section"><a href="#interresult">View Result</a></li>
+              <li class="scroll-to-section"><a href="#history">History</a></li>
               <li class="scroll-to-section"><a href="#contact">Contact Us</a></li> 
               <li class="scroll-to-section"><div class="main-blue-button"><a href="#setup">Create Pipeline</a></div></li> 
             </ul>        
@@ -621,7 +621,7 @@ https://templatemo.com/tm-563-seo-dream
   <br> <br>
 
   <!--------------------------------------- Intermediate Results --------------------------------->
-  <!-- <div id="interresult" class="about-us section">
+  <div id="history" class="about-us section">
     <div class="container">
       <div class="row">
         <div class="col-lg-6">
@@ -631,7 +631,7 @@ https://templatemo.com/tm-563-seo-dream
         </div>
         <div class="col-lg-6 align-self-center wow fadeInRight" data-wow-duration="1s" data-wow-delay="0.5s">
           <div class="section-heading">
-            <h2>Intermediate <span>Images</span></h2>
+            <h2><span>History</span></h2>
           </div>
           
           <div id="list-text">
@@ -639,14 +639,18 @@ https://templatemo.com/tm-563-seo-dream
           </div>
           <ul id="comp-list">
           </ul>
-          <p><a rel="nofollow" href="https://templatemo.com/tm-563-seo-dream" target="_parent">SEO Dream</a> is free digital marketing CSS template provided by TemplateMo website. You are allowed to use this template for your business websites. Please DO NOT redistribute this template ZIP file on any Free CSS collection websites. You may contact us for more information. Thank you.</p> -->
-          <!-- <br>
-          <div class="main-green-button"><a href="#setup">Setup Pipeline</a></div>
+          <p><a rel="nofollow" href="https://templatemo.com/tm-563-seo-dream" target="_parent">SEO Dream</a> is free digital marketing CSS template provided by TemplateMo website. You are allowed to use this template for your business websites. Please DO NOT redistribute this template ZIP file on any Free CSS collection websites. You may contact us for more information. Thank you.</p>          <br>
+          <!-- <div class="main-green-button"><a href="#setup">Setup Pipeline</a></div> -->
         </div>
       </div>
     </div>
-  </div> -->
+  </div>
 
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
   <div id="portfolio" class="our-portfolio section">
     <div class="container">
       <div class="row">
@@ -891,9 +895,11 @@ https://templatemo.com/tm-563-seo-dream
         'Content-Type': 'application/json'
       },
       body: JSON.stringify(sendData)
-    }).then(res => res.json())
-      .then(res => {
-        console.log(res);
+    }).then(res =>{
+      window.location.href = '/viewResult/?name='+location.getItem('pipeline');
+    })
+      .catch(err => {
+        console.log(err);
         // localStorage.removeItem('image');
       });
     
@@ -901,11 +907,13 @@ https://templatemo.com/tm-563-seo-dream
 
   function seturl(){
     var fileInput = document.getElementById('customFile');   
+    var pipeline = document.getElementById('pname');
     var filename = fileInput.files[0].name;
     console.log(typeof filename);
     console.log(filename);
     try{
       localStorage.setItem('image',filename);
+      localStorage.setItem('pipeline', pipeline);
     }catch(err){
       alert(err);
     }

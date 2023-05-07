@@ -133,6 +133,11 @@ app.get("/home", (req, res) => {
       res.redirect('/');
     } 
     console.log(decoded.username);
+
+    // Fetch History
+    // let hist_query = 'SELECT ?? FROM ??'
+    // let pipeline_query = mysql.format( hist_query, [ "pipeline_name", "dfs.operation" ] );
+
     let select_query = 'SELECT * FROM ?? WHERE ?? = ?';
     let query = mysql.format(select_query, ["dfs.users", "username", decoded.username]);
 
@@ -373,6 +378,7 @@ app.post("/postjson", function (req, res) {
     console.log(data[0]);
     sendData = {
       oid : data[0].id,
+      pipeline: data[0].pipeline_name,
       user_id: decoded.userid,
       imgpath: imgpath,
       pipeline: req.body.items
@@ -382,7 +388,7 @@ app.post("/postjson", function (req, res) {
       console.log("response recieved");
       // print(res);
       
-      res.redirect('/viewResult');
+      res.redirect(`/viewResult/?name=${data[0].pipeline_name}`);
     })
     .catch(err => console.log(err));
   });
@@ -393,6 +399,8 @@ app.post("/postjson", function (req, res) {
 
 app.get("/viewResult", (req, res) => {
     //res.render('result.ejs');
+    console.log(req.query.name);
+
     let op_id = 5;
     let query = 'SELECT * FROM dfs.operation WHERE id = ? ORDER BY step';
     query = mysql.format(query, [op_id]);
