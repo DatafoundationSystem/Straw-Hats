@@ -184,6 +184,7 @@ We propose a distributed platform that provides build, development and deploymen
 **Figure 4:** ER Diagram
 
 **Sequence Diagram**
+</br>
 Component Upload Sequence Diagram
 ![alt text](https://github.com/Jasika16/Straw-Hats/blob/main/Assets/Images/Sequence_Diagram1.png)
 
