@@ -973,7 +973,39 @@ preloader
 }
 
 
+/* 
+---------------------------------------------
+upload component
+--------------------------------------------- 
+*/
+.upload-comp-class{
+  border:2px solid gray;
+  /* padding-top: 50px;
+  padding-bottom: 10px; */
+  align-items: center;
+  /* margin-top: 50px; */
+  margin: auto;
+  height: 700px;
+  padding-top: 120px;
+  background-image: url(../images/contact-bg.jpg);
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover;
+  margin-top: 50px;
+  /* border-radius: 25px; */
+}
 
+.inner-comp{
+  border:2px solid gray;
+  margin: auto;
+  background-color: white;
+  border-radius: 30px;
+  padding-top: 50px;
+}
+
+.zip-text{
+  color: red;
+}
 /* 
 ---------------------------------------------
 Banner Style
