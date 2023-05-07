@@ -176,6 +176,8 @@ We propose a distributed platform that provides build, development and deploymen
 
 **Figure 3:** Use Case Diagram
 
+</br>
+</br>
 
 **ER Diagram**
 
@@ -183,10 +185,21 @@ We propose a distributed platform that provides build, development and deploymen
 
 **Figure 4:** ER Diagram
 
+</br>
+</br>
+
 **Sequence Diagram**
 </br>
 Component Upload Sequence Diagram
 ![alt text](https://github.com/Jasika16/Straw-Hats/blob/main/Assets/Images/Sequence_Diagram1.png)
 
-**Figure 5:** Sequence Diagram
+**Figure 5:** Sequence Diagram for Component Upload
+
+</br>
+</br>
+
+Pipeline Working Sequence Diagram
+![alt text](https://github.com/Jasika16/Straw-Hats/blob/main/Assets/Images/Sequence_Diagram2.png)
+
+**Figure 6:** Sequence Diagram for Pipeline working
 
