@@ -135,71 +135,84 @@ app.get("/home", (req, res) => {
     console.log(decoded.username);
 
     // Fetch History
-    // let hist_query = 'SELECT ?? FROM ??'
-    // let pipeline_query = mysql.format( hist_query, [ "pipeline_name", "dfs.operation" ] );
+    let hist_query = 'SELECT ?? FROM ?? WHERE ?? = ? GROUP BY ??'
+    let pipeline_query = mysql.format( hist_query, [ "pipeline_name", "dfs.operation", "user_id", decoded.userid, "id" ] );
+    console.log(pipeline_query);
 
-    let select_query = 'SELECT * FROM ?? WHERE ?? = ?';
-    let query = mysql.format(select_query, ["dfs.users", "username", decoded.username]);
-
-    mysqlconnection.query(query, (err,data)=>{
+    mysqlconnection.query(pipeline_query, (err,pipeline_data)=>{
       if(err){
         console.log(err);
         return;
       }
-      // console.log(data[0]);
-      if (data.length == 1){
-        console.log(data);
-        console.log(data[0].role);
+      else{
+        console.log( pipeline_data );
 
-        let comp_select_query = 'SELECT * FROM ??';
-        let component_query = mysql.format( comp_select_query, ["dfs.components"]);
-        let user_role = data[0].role;
+        let select_query = 'SELECT * FROM ?? WHERE ?? = ?';
+        let query = mysql.format(select_query, ["dfs.users", "username", decoded.username]);
 
-
-        mysqlconnection.query(component_query, (err,data)=>{
+        mysqlconnection.query(query, (err,data)=>{
           if(err){
             console.log(err);
             return;
           }
+          // console.log(data[0]);
+          if (data.length == 1){
+            console.log(data);
+            console.log(data[0].role);
 
-          let component_data = []
+            let comp_select_query = 'SELECT * FROM ??';
+            let component_query = mysql.format( comp_select_query, ["dfs.components"]);
+            let user_role = data[0].role;
 
-          for (let i = 0; i < data.length; i++) {
-            // text += "The number is " + i + "<br>";
-            let temp = [
-              data[i].id, //cid
-              data[i].name, //cname
-              data[i].description //cdesc
-            ]
-            component_data.push(temp);
-          }
-          console.log(component_data);
-          if( user_role == 1 ){
-            const obj = {
-              flag:"1",
-              cdata:component_data
-            };
-            // res.render('index.ejs', {obj});
-            var multiObj = [{flag:"1", cdata: component_data}];
-            res.render('index.ejs', { mobj: multiObj } );
-          }
-          else{
-            const obj = {
-              flag:"0",
-              cdata:component_data
-            };
-            // res.render('index.ejs', {obj});
-            var multiObj = [{flag:"0", cdata: component_data}];
-            res.render('index.ejs', { mobj: multiObj } );
-            //res.render('index.ejs', data: {flag:"0", cdata: component_data});
+
+            mysqlconnection.query(component_query, (err,data)=>{
+              if(err){
+                console.log(err);
+                return;
+              }
+
+              let component_data = []
+
+              for (let i = 0; i < data.length; i++) {
+                // text += "The number is " + i + "<br>";
+                let temp = [
+                  data[i].id, //cid
+                  data[i].name, //cname
+                  data[i].description //cdesc
+                ]
+                component_data.push(temp);
+              }
+              console.log(component_data);
+              if( user_role == 1 ){
+                const obj = {
+                  flag:"1",
+                  cdata:component_data
+                };
+                // res.render('index.ejs', {obj});
+                var multiObj = [{flag:"1", cdata: component_data, history: pipeline_data}];
+                res.render('index.ejs', { mobj: multiObj } );
+              }
+              else{
+                const obj = {
+                  flag:"0",
+                  cdata:component_data
+                };
+                // res.render('index.ejs', {obj});
+                var multiObj = [{flag:"0", cdata: component_data, history: pipeline_data}];
+                res.render('index.ejs', { mobj: multiObj } );
+                //res.render('index.ejs', data: {flag:"0", cdata: component_data});
+              }
+            });
+
+
+          }else{ 
+            res.redirect('/')
           }
         });
 
-
-      }else{ 
-        res.redirect('/')
       }
     });
+    
 
     // let comp_query = 'SELECT * FROM ?? ';
     // let comp_ret_query = mysql.formal( comp_query, [ "components" ] );
