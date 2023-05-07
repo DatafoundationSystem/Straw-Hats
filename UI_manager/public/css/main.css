@@ -1907,3 +1907,23 @@ responsive
 Slide Show
 --------------------------------------------- 
 */
+.history-list{
+  color:#3B566E;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.history-list :hover{
+  color: #1b2e82;
+  font-size: 23px;
+}
+
+.ul-history{
+  list-style-image: src(
+    "/images/eye.png");
+}
+
+.icon-img{
+  width: 20px;
+  height: 20px;
+}

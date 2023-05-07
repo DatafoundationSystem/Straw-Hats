@@ -7,8 +7,11 @@ const mysql = require("mysql")
 const jwt = require('jsonwebtoken')
 const axios = require('axios')
 const cookie_parser = require('cookie-parser')
-// const flash = require('connect-flash') 
-// const session = require('express-session');
+const fs = require("fs");
+const fs1 = require('fs-extra');
+var rimraf = require("rimraf");
+
+
 // const axios = require('axios')
 
 const app = express();
@@ -44,8 +47,8 @@ var minioClient = new Minio.Client({
   endPoint: '127.0.0.1',
   port: 9000,
   useSSL: false,
-  accessKey: 'EitPADwoAUvkzhs6',
-  secretKey: 'g82ahUIxSAhtIJeCoLWTV1YrONFpjTop'
+  accessKey: '9QKx0lFAgwt0PBqi',
+  secretKey: 'vJ18iMajpBDKbuac8okG9W8b1okRFRT4'
 });
 
 app.listen(port, () => {
@@ -194,68 +197,86 @@ app.get("/home", (req, res) => {
       res.redirect('/');
     } 
     console.log(decoded.username);
-    let select_query = 'SELECT * FROM ?? WHERE ?? = ?';
-    let query = mysql.format(select_query, ["dfs.users", "username", decoded.username]);
 
-    mysqlconnection.query(query, (err,data)=>{
+    // Fetch History
+    let hist_query = 'SELECT ?? FROM ?? WHERE ?? = ? GROUP BY ??'
+    let pipeline_query = mysql.format( hist_query, [ "pipeline_name", "dfs.operation", "user_id", decoded.userid, "id" ] );
+    console.log(pipeline_query);
+
+    mysqlconnection.query(pipeline_query, (err,pipeline_data)=>{
       if(err){
         console.log(err);
         return;
       }
-      // console.log(data[0]);
-      if (data.length == 1){
-        console.log(data);
-        console.log(data[0].role);
+      else{
+        console.log( pipeline_data );
 
-        let comp_select_query = 'SELECT * FROM ??';
-        let component_query = mysql.format( comp_select_query, ["dfs.components"]);
-        let user_role = data[0].role;
+        let select_query = 'SELECT * FROM ?? WHERE ?? = ?';
+        let query = mysql.format(select_query, ["dfs.users", "username", decoded.username]);
 
-
-        mysqlconnection.query(component_query, (err,data)=>{
+        mysqlconnection.query(query, (err,data)=>{
           if(err){
             console.log(err);
             return;
           }
+          // console.log(data[0]);
+          if (data.length == 1){
+            console.log(data);
+            console.log(data[0].role);
 
-          let component_data = []
+            let comp_select_query = 'SELECT * FROM ??';
+            let component_query = mysql.format( comp_select_query, ["dfs.components"]);
+            let user_role = data[0].role;
 
-          for (let i = 0; i < data.length; i++) {
-            // text += "The number is " + i + "<br>";
-            let temp = [
-              data[i].id, //cid
-              data[i].name, //cname
-              data[i].description //cdesc
-            ]
-            component_data.push(temp);
-          }
-          console.log(component_data);
-          if( user_role == 1 ){
-            const obj = {
-              flag:"1",
-              cdata:component_data
-            };
-            // res.render('index.ejs', {obj});
-            var multiObj = [{flag:"1", cdata: component_data}];
-            res.render('index.ejs', { mobj: multiObj } );
-          }
-          else{
-            const obj = {
-              flag:"0",
-              cdata:component_data
-            };
-            // res.render('index.ejs', {obj});
-            var multiObj = [{flag:"0", cdata: component_data}];
-            res.render('index.ejs', { mobj: multiObj } );
-            //res.render('index.ejs', data: {flag:"0", cdata: component_data});
+
+            mysqlconnection.query(component_query, (err,data)=>{
+              if(err){
+                console.log(err);
+                return;
+              }
+
+              let component_data = []
+
+              for (let i = 0; i < data.length; i++) {
+                // text += "The number is " + i + "<br>";
+                let temp = [
+                  data[i].id, //cid
+                  data[i].name, //cname
+                  data[i].description //cdesc
+                ]
+                component_data.push(temp);
+              }
+              console.log(component_data);
+              if( user_role == 1 ){
+                const obj = {
+                  flag:"1",
+                  cdata:component_data
+                };
+                // res.render('index.ejs', {obj});
+                var multiObj = [{flag:"1", cdata: component_data, history: pipeline_data}];
+                res.render('index.ejs', { mobj: multiObj } );
+              }
+              else{
+                const obj = {
+                  flag:"0",
+                  cdata:component_data
+                };
+                // res.render('index.ejs', {obj});
+                var multiObj = [{flag:"0", cdata: component_data, history: pipeline_data}];
+                res.render('index.ejs', { mobj: multiObj } );
+                //res.render('index.ejs', data: {flag:"0", cdata: component_data});
+              }
+            });
+
+
+          }else{ 
+            res.redirect('/')
           }
         });
 
-
-      }else{ 
-        res.redirect('/')
       }
     });
+    
 
     // let comp_query = 'SELECT * FROM ?? ';
     // let comp_ret_query = mysql.formal( comp_query, [ "components" ] );
@@ -434,6 +455,7 @@ app.post("/postjson", function (req, res) {
     console.log(data[0]);
     sendData = {
       oid : data[0].id,
+      pipeline: data[0].pipeline_name,
       user_id: decoded.userid,
       imgpath: imgpath,
       pipeline: req.body.items
@@ -443,7 +465,7 @@ app.post("/postjson", function (req, res) {
       console.log("response recieved");
       // print(res);
       
-      res.redirect('/viewResult');
+      res.redirect(`/viewResult/?name=${data[0].pipeline_name}`);
     })
     .catch(err => console.log(err));
   });
@@ -454,67 +476,162 @@ app.post("/postjson", function (req, res) {
 
 app.get("/viewResult", (req, res) => {
     //res.render('result.ejs');
+    console.log(req.query.name);
+
     let op_id = 5;
     let query = 'SELECT * FROM dfs.operation WHERE id = ? ORDER BY step';
     query = mysql.format(query, [op_id]);
     console.log(query);
 
-    let send_data = []
-    
-    mysqlconnection.query(query, (err,data)=>{
-      if(err){
-        console.log(err);
-        res.send("Error sending operation.");
-      }
-      console.log( data );
-      
-      for(var i = 0; i < data.length ; i++){
+    // create dir on local system
+    const path = "./public/display/" + op_id;
+  
+    fs.access(path, (error) => {
+      if (error) {
+        fs.mkdir(path, (error) => {
+          if (error) {
+            console.log(error);
+          } 
+          else {
+            console.log("New Directory created successfully !!");
 
-        let cname_query = 'SELECT name FROM dfs.components WHERE id = ?';
-        cname_query = mysql.format( cname_query, [ data[i].component_id ] );
-        
-        let oid = data[i].id;
-        let step = data[i].step;
-        let image_name = data[i].output;
 
-        mysqlconnection.query( cname_query, (err,data1)=>{
+            let send_data = []
+            mysqlconnection.query(query, (err,data)=>{
+              if(err){
+                console.log(err);
+                res.send("Error sending operation.");
+              }
+              console.log( data );
+              
+              for(var i = 0; i < data.length ; i++){
+
+                let cname_query = 'SELECT name FROM dfs.components WHERE id = ?';
+                cname_query = mysql.format( cname_query, [ data[i].component_id ] );
+                
+                let oid = data[i].id;
+                let step = data[i].step;
+                let image_name = data[i].output;
+
+                mysqlconnection.query( cname_query, (err,data1)=>{
+                  if(err){
+                    console.log(err);
+                    res.send("Error sending component name.");
+                  }
+                  //console.log( data1[0].name );
+                  //console.log( data[i].step );
+
+                  let image_path = '/display/' + image_name;
+                  let cur_data = [
+                    oid, // operation id
+                    step, // step
+                    image_path, // image name
+                    data1[0].name // component name
+                  ]
+                  send_data.push( cur_data );
+
+                  let local_path = '/public' + image_path;
+                  // download files from mino to local storage ===============================
+                  minioClient.fGetObject( 'uploads' , image_name, local_path, function(err) {
+                    if (err) {
+                        return console.log(err);
+                    }
+                        console.log('success in file download');
+                    })
+
+                });
+              }
+              
+              setTimeout(function temp(){
+                console.log( send_data );
+                console.log( send_data[0][2] );
+                let old_path = './' + op_id;
+                let new_path = './public/display/' + op_id + '/';
+                fs1.move(old_path, new_path, err => {
+                  if(err) return console.error(err);
+                  console.log('success!');
+                });
+                console.log("========== Data Send to front end =============");
+                res.render('result.ejs', { oper : send_data } );
+              }, 2000);
+
+
+            });
+          }
+        });
+      } 
+      else {
+        console.log("Given Directory already exists !!");
+        let delete_path = './public/display/' + op_id;
+        rimraf( delete_path , function () { console.log("done"); });
+
+        let send_data = []
+        mysqlconnection.query(query, (err,data)=>{
           if(err){
             console.log(err);
-            res.send("Error sending component name.");
+            res.send("Error sending operation.");
           }
-          //console.log( data1[0].name );
-          //console.log( data[i].step );
+          console.log( data );
+          
+          for(var i = 0; i < data.length ; i++){
 
-          let image_path = '/display/' + image_name;
-          let cur_data = [
-            oid, // operation id
-            step, // step
-            image_path, // image name
-            data1[0].name // component name
-          ]
-          send_data.push( cur_data );
+            let cname_query = 'SELECT name FROM dfs.components WHERE id = ?';
+            cname_query = mysql.format( cname_query, [ data[i].component_id ] );
+            
+            let oid = data[i].id;
+            let step = data[i].step;
+            let image_name = data[i].output;
 
-          let local_path = '/public' + image_path;
-          // download files from mino to local storage ===============================
-          minioClient.fGetObject( 'uploads' , image_name, local_path, function(err) {
-            if (err) {
-                return console.log(err);
-            }
-                console.log('success in file download');
-            })
+            mysqlconnection.query( cname_query, (err,data1)=>{
+              if(err){
+                console.log(err);
+                res.send("Error sending component name.");
+              }
+              //console.log( data1[0].name );
+              //console.log( data[i].step );
+
+              let image_path = '/display/' + image_name;
+              let cur_data = [
+                oid, // operation id
+                step, // step
+                image_path, // image name
+                data1[0].name // component name
+              ]
+              send_data.push( cur_data );
+
+              //let local_path = '/temp' + image_path;
+              
+              // download files from mino to local storage ===============================
+              minioClient.fGetObject( 'uploads' , image_name, image_name, function(err) {
+                if (err) {
+                    return console.log(err);
+                }
+                    console.log('success in file download');
+              })
+
+
+            });
+          }
+          
+          setTimeout(function temp(){
+            console.log( send_data );
+            console.log( send_data[0][2] );
+
+            let old_path = './' + op_id;
+            let new_path = './public/display/' + op_id + '/';
+            fs1.move(old_path, new_path, err => {
+              if(err) return console.error(err);
+              console.log('success!');
+            });
+
+            console.log("========== Data Send to front end =============");
+            res.render('result.ejs', { oper : send_data } );
+          }, 2000);
+
 
         });
       }
-      
-      setTimeout(function temp(){
-        console.log( send_data );
-        console.log( send_data[0][2] );
-        console.log("========== Data Send to front end =============");
-        res.render('result.ejs', { oper : send_data } );
-      }, 2000);
-
-
-    });
+    }); 
 });
 
 

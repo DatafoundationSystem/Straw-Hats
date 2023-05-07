@@ -120,7 +120,7 @@ We propose a distributed platform that provides build, development and deploymen
 
 ![alt text](https://github.com/Jasika16/Straw-Hats/blob/main/Assets/Images/System%20Architecture.jpg)
 
-**Figure:** System Architecture
+**Figure 1:** System Architecture
 
 
 **5.1 UI Manager:**
@@ -158,6 +158,7 @@ We propose a distributed platform that provides build, development and deploymen
   - A PubSub architecture is supported by Apache Kafka, which means that users can publish and consume messages from a topic queue.
 
   ![alt text](https://github.com/Jasika16/Straw-Hats/blob/main/Assets/Images/scheduler.png)
+  **Figure 2:** Scheduler Architecture
 
 **5.5 Nodes:**
   - The nodes are running containers of different microservices and CV Tools which are deployed on the platform.
@@ -171,13 +172,21 @@ We propose a distributed platform that provides build, development and deploymen
 
 **Use Case Diagram**
 
-![alt text](https://github.com/Jasika16/Straw-Hats/blob/main/Assets/Images/Use%20Case.png)
+![alt text](https://github.com/Jasika16/Straw-Hats/blob/main/Assets/Images/UseCase_Diagram_DFS.png)
 
-**Figure:** Use Case Diagram
+**Figure 3:** Use Case Diagram
 
 
 **ER Diagram**
 
-![alt text](https://github.com/Jasika16/Straw-Hats/blob/main/Assets/Images/ER%20Diagram.png)
+![alt text](https://github.com/Jasika16/Straw-Hats/blob/main/Assets/Images/ER_Diagram_DFS.png)
 
-**Figure:** ER Diagram
+**Figure 4:** ER Diagram
+
+**Sequence Diagram**
+</br>
+Component Upload Sequence Diagram
+![alt text](https://github.com/Jasika16/Straw-Hats/blob/main/Assets/Images/Sequence_Diagram1.png)
+
+**Figure 5:** Sequence Diagram
+

@@ -57,7 +57,7 @@ https://templatemo.com/tm-563-seo-dream
         <div class="col-12">
           <nav class="main-nav">
             <!-- ***** Logo Start ***** -->
-            <a href="index.html" class="logo">
+            <a href="" class="logo">
               <h4>AI / CV Pipeline <img src="/images/logo-icon.png" alt=""></h4>
             </a>
             <!-- ***** Logo End ***** -->
@@ -66,8 +66,8 @@ https://templatemo.com/tm-563-seo-dream
               <li class="scroll-to-section"><a href="#top" class="active">Home</a></li>
               <li class="scroll-to-section"><a href="#setup">Setup Pipeline</a></li>
               <li class="scroll-to-section"><a href="#toolbar">CV Toolbar</a></li>
-              <li class="scroll-to-section"><a href="#yourpipeline">Your Pipeline</a></li>
-              <li class="scroll-to-section"><a href="#interresult">View Result</a></li>
+              <li class="scroll-to-section"><a href="#yourpipeline">Preview Pipeline</a></li>
+              <li class="scroll-to-section"><a href="#history">History</a></li>
               <li class="scroll-to-section"><a href="#contact">Contact Us</a></li> 
               <li class="scroll-to-section"><div class="main-blue-button"><a onclick="logoutUser()">Logout</a></div></li> 
             </ul>        
@@ -246,7 +246,7 @@ https://templatemo.com/tm-563-seo-dream
               </div>
               <div class="col-lg-8">
                 <div class="right-content">
-                  <h4><a href="#yourpipeline">View Pipeline</a></h4>
+                  <h4><a href="#yourpipeline">Preview Pipeline</a></h4>
                   <p>Preview your pipeline before the execution.</p>
                 </div>
               </div>
@@ -263,8 +263,8 @@ https://templatemo.com/tm-563-seo-dream
               </div>
               <div class="col-lg-8">
                 <div class="right-content">
-                  <h4>Execute</h4>
-                  <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium dormque laudantium.</p>
+                  <h4><a href="#yourpipeline">Execute</a></h4>
+                  <p>Execute the pipline to apply selected CV Tools for pre-processing on your image.</p>
                 </div>
               </div>
             </div>
@@ -280,8 +280,8 @@ https://templatemo.com/tm-563-seo-dream
               </div>
               <div class="col-lg-8">
                 <div class="right-content">
-                  <h4><a onclick="sendPipeline()">View Intermediate Images</a></h4>
-                  <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium dormque laudantium.</p>
+                  <h4><a onclick="sendPipeline()" href="#yourpipeline">View Result</a></h4>
+                  <p>After executing the pipeline, view the intermediate results and final result.</p>
                 </div>
               </div>
             </div>
@@ -297,8 +297,8 @@ https://templatemo.com/tm-563-seo-dream
               </div>
               <div class="col-lg-8">
                 <div class="right-content">
-                  <h4>View Final Image</h4>
-                  <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium dormque laudantium.</p>
+                  <h4><a href="#history">History</a></h4>
+                  <p>View Results of your previous pipeline execution in the history.</p>
                 </div>
               </div>
             </div>
@@ -621,8 +621,8 @@ https://templatemo.com/tm-563-seo-dream
   <br> <br>
   <br> <br>
 
-  <!--------------------------------------- Intermediate Results --------------------------------->
-  <!-- <div id="interresult" class="about-us section">
+  <!--------------------------------------- History --------------------------------->
+  <div id="history" class="about-us section">
     <div class="container">
       <div class="row">
         <div class="col-lg-6">
@@ -632,22 +632,33 @@ https://templatemo.com/tm-563-seo-dream
         </div>
         <div class="col-lg-6 align-self-center wow fadeInRight" data-wow-duration="1s" data-wow-delay="0.5s">
           <div class="section-heading">
-            <h2>Intermediate <span>Images</span></h2>
+            <h2><span>History</span></h2>
           </div>
           
           <div id="list-text">
-            No images to show
-          </div>
-          <ul id="comp-list">
+            <% var len = mobj[0].history.length ; %>
+            
+            <ul id="ul-history">
+            <% for(var i=0 ; i < len ; i++ ) {%>
+
+                <li class="history-list"><a href="" target="_blank" id="hist-list"><img class="icon-img" src="/images/eye2.png" alt=""> &nbsp; &nbsp; &nbsp; <%= mobj[0].history[i].pipeline_name %></a></li>
+
+            <% } %>
           </ul>
-          <p><a rel="nofollow" href="https://templatemo.com/tm-563-seo-dream" target="_parent">SEO Dream</a> is free digital marketing CSS template provided by TemplateMo website. You are allowed to use this template for your business websites. Please DO NOT redistribute this template ZIP file on any Free CSS collection websites. You may contact us for more information. Thank you.</p> -->
-          <!-- <br>
-          <div class="main-green-button"><a href="#setup">Setup Pipeline</a></div>
+          </div>
+          
+          <!-- <p><a rel="nofollow" href="https://templatemo.com/tm-563-seo-dream" target="_parent">SEO Dream</a> is free digital marketing CSS template provided by TemplateMo website. You are allowed to use this template for your business websites. Please DO NOT redistribute this template ZIP file on any Free CSS collection websites. You may contact us for more information. Thank you.</p>          <br> -->
+          <!-- <div class="main-green-button"><a href="#setup">Setup Pipeline</a></div> -->
         </div>
       </div>
     </div>
-  </div> -->
+  </div>
 
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
   <div id="portfolio" class="our-portfolio section">
     <div class="container">
       <div class="row">
@@ -892,9 +903,11 @@ https://templatemo.com/tm-563-seo-dream
         'Content-Type': 'application/json'
       },
       body: JSON.stringify(sendData)
-    }).then(res => res.json())
-      .then(res => {
-        console.log(res);
+    }).then(res =>{
+      window.location.href = '/viewResult/?name='+location.getItem('pipeline');
+    })
+      .catch(err => {
+        console.log(err);
         // localStorage.removeItem('image');
       });
     
@@ -902,11 +915,13 @@ https://templatemo.com/tm-563-seo-dream
 
   function seturl(){
     var fileInput = document.getElementById('customFile');   
+    var pipeline = document.getElementById('pname');
     var filename = fileInput.files[0].name;
     console.log(typeof filename);
     console.log(filename);
     try{
       localStorage.setItem('image',filename);
+      localStorage.setItem('pipeline', pipeline);
     }catch(err){
       alert(err);
     }
