@@ -171,7 +171,7 @@ We propose a distributed platform that provides build, development and deploymen
 
 **Use Case Diagram**
 
-![alt text]([https://github.com/Jasika16/Straw-Hats/blob/main/Assets/Images/Use%20Case.png](https://github.com/Jasika16/Straw-Hats/blob/main/Assets/Images/UseCase_Diagram_DFS.png))
+![alt text](https://github.com/Jasika16/Straw-Hats/blob/main/Assets/Images/UseCase_Diagram_DFS.png)
 
 **Figure:** Use Case Diagram
 
