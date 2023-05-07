@@ -368,16 +368,21 @@ app.post("/postjson", function (req, res) {
     console.log(data[0]);
     sendData = {
       oid : data[0].id,
-      user_id: data[0].id,
+      user_id: decoded.userid,
       imgpath: imgpath,
       pipeline: req.body.items
     };
     axios.post('http://127.0.0.1:8000/createPipeline',sendData)
-    .then((res => console.log("response recieved")))
+    .then(resp => {
+      console.log("response recieved");
+      // print(res);
+      
+      res.redirect('/viewResult');
+    })
     .catch(err => console.log(err));
   });
 
-  res.send({msg:"Hello"});
+  // res.send({msg:"Hello"});
 });
 
 

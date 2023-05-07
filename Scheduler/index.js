@@ -52,6 +52,7 @@ app.post("/createPipeline", function (req, res) {
   console.log(req.body);
   var step = 1;
   var ip_path = req.body.imgpath;
+
   for(var comp of req.body.pipeline){
     setTimeout(function temp(){
       console.log("------");
@@ -71,7 +72,24 @@ app.post("/createPipeline", function (req, res) {
         oid:req.body.oid,
         step:step
       };
+      temp=ip_path;
       ip_path = String(req.body.oid) + '/' + String(step) + '-op.jpg' ;
+
+      // operation_query = "INSERT INTO dfs.operation(id,user_id,component_id,step,input,output) VALUES (?,?,?,?,?,?)"
+      // operation_query = mysql.format(operation_query,[req.body.oid, req.body.user_id, data[0].id, step, temp, ip_path]);
+      // console.log(operation_query);
+      // mysqlconnection.query(operation_query, (err,operation_data)=>{
+      //   if(err){
+      //     console.log(err);
+          
+      //     res.send({msg:"Error"});
+      //   }
+      //   console.log(step," Completed")
+
+      // });
+
+
+
       step+=1;
       console.log(data[0].url);
       console.log(sendData);
