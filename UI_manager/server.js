@@ -477,7 +477,7 @@ app.post("/postjson", function (req, res) {
 app.get("/viewResult", (req, res) => {
     //res.render('result.ejs');
     console.log(req.query.name);
-
+    console.log("Current directory:", __dirname);
     let op_id = 5;
     let query = 'SELECT * FROM dfs.operation WHERE id = ? ORDER BY step';
     query = mysql.format(query, [op_id]);
@@ -530,9 +530,9 @@ app.get("/viewResult", (req, res) => {
                   ]
                   send_data.push( cur_data );
 
-                  let local_path = '/public' + image_path;
+                  let local_path = __dirname + '/public' + image_path;
                   // download files from mino to local storage ===============================
-                  minioClient.fGetObject( 'uploads' , image_name, local_path, function(err) {
+                  minioClient.fGetObject( 'uploads' , image_name, image_name, function(err) {
                     if (err) {
                         return console.log(err);
                     }
@@ -585,7 +585,7 @@ app.get("/viewResult", (req, res) => {
             mysqlconnection.query( cname_query, (err,data1)=>{
               if(err){
                 console.log(err);
-                res.send("Error sending component name.");
+                res.send("Error sending component name."); 
               }
               //console.log( data1[0].name );
               //console.log( data[i].step );
