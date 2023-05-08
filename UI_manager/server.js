@@ -14,7 +14,6 @@ var rimraf = require("rimraf");
 
 // const axios = require('axios')
 
-
 const app = express();
 var cors = require('cors');
 
@@ -119,6 +118,71 @@ app.post("/", function(req,res){
     }
   });
 })
+
+
+app.get('/signup', (req,res)=>{
+  res.render('signup.ejs', {msg: ""});
+});
+
+
+app.post("/signup", function(req,res){
+  username = req.body.user.name;
+  password = req.body.user.password;
+  role = req.body.user.role;
+  confirm_password = req.body.user.cpassword;
+  
+  console.log(req.body.user)
+
+  if(password!=confirm_password){
+    console.log(1)
+    res.render('signup.ejs', {msg: "Password Not matched"});
+    return;
+  }
+    let r=0;
+    if(role=="Admin")r=1;
+    else r=2;
+
+    let insert_query = 'INSERT INTO dfs.users (username,pass,role) VALUES (?,?,?)';
+    let query = mysql.format(insert_query, [username,password,r]);
+    console.log(query);
+
+    mysqlconnection.query(query, (err,data)=>{
+      if(err){
+        console.log(err);
+        res.render('signup.ejs', {msg: "User Name already exists. Try again !!"});
+      }
+
+      let select_query = 'SELECT * FROM ?? WHERE ?? = ?';
+      let query = mysql.format(select_query, ["dfs.users", "username", username]);
+
+      mysqlconnection.query(query, (err,data)=>{
+        if(err){
+          console.log(err);
+          return;
+        }
+
+      var token = jwt.sign({username : username, userid:data[0].user_id}, "SuperSecretKey", {expiresIn : 86400});
+        console.log(token);
+        
+        res
+        .status(200)
+        .cookie("access_token" , token, {
+          httpOnly:true,
+        })
+        .redirect('/home');
+      });
+      return;
+
+    });
+    
+})
+
+app.get('/logout', (req,res)=>{
+  res.clearCookie('access_token');
+  res.redirect("/")
+});
+
+
 
 app.get("/home", (req, res) => {
   console.log(req.cookies['access_token']);
@@ -569,3 +633,7 @@ app.get("/viewResult", (req, res) => {
       }
     }); 
 });
+
+
+
+

@@ -234,3 +234,14 @@ document.getElementById("uploadButton").onclick = () => {
       console.log(res.data.url)
     })
 }
+
+function logoutUser(){
+
+      link = document.createElement('a');
+      link.setAttribute('href', window.origin + '/logout')
+      link.click();
+
+  // console.log("33333")
+  // console.log("Hello");     
+
+}
