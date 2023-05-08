@@ -10,6 +10,7 @@ const cookie_parser = require('cookie-parser')
 const fs = require("fs");
 const fs1 = require('fs-extra');
 var rimraf = require("rimraf");
+const crypto = require('crypto');
 
 
 // const axios = require('axios')
@@ -43,6 +44,9 @@ mysqlconnection.connect(function(err){
   console.log('Connected to database.');
 });
 
+
+
+
 var minioClient = new Minio.Client({
   endPoint: '127.0.0.1',
   port: 9000,
@@ -50,6 +54,24 @@ var minioClient = new Minio.Client({
   accessKey: '9QKx0lFAgwt0PBqi',
   secretKey: 'vJ18iMajpBDKbuac8okG9W8b1okRFRT4'
 });
+
+//Encrypting text
+function encrypt(text) {
+  const secret = 'Vishal8199';
+ 
+// Calling createHash method
+const hash = crypto.createHash('sha256', secret)
+                    
+                   // updating data
+                   .update(text)
+
+                   // Encoding to be used
+                   .digest('hex');
+ 
+console.log(hash);
+return hash;
+}
+
 
 app.listen(port, () => {
   console.log(`Application started and Listening on port ${port}`);
@@ -93,9 +115,12 @@ app.post("/", function(req,res){
       console.log(1);
       res.render('login.ejs', {msg: "User doesn't exists. Try again!"});
     }else{ 
-      console.log(data[0]);
+      // console.log(data[0]);
       // console.log(data[0].pass);
-      if(data[0].pass == password){
+      hashed_pass = encrypt(password)
+      // console.log(hashed_pass)
+      // console.log(data[0].pass)
+      if(hashed_pass == data[0].pass){
         // set cookie
         console.log(2);
         var token = jwt.sign({username : username, userid:data[0].user_id}, "SuperSecretKey", {expiresIn : 86400});
@@ -142,8 +167,9 @@ app.post("/signup", function(req,res){
     if(role=="Admin")r=1;
     else r=2;
 
+    AES_encrypted_hash = encrypt(password)
     let insert_query = 'INSERT INTO dfs.users (username,pass,role) VALUES (?,?,?)';
-    let query = mysql.format(insert_query, [username,password,r]);
+    let query = mysql.format(insert_query, [username,AES_encrypted_hash,r]);
     console.log(query);
 
     mysqlconnection.query(query, (err,data)=>{
