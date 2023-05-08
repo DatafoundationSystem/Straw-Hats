@@ -1939,3 +1939,24 @@ Slide Show
   padding-bottom: 30px;
   padding-top: 0px;
 }
+
+.result-header{
+  margin-left: 170px;
+  margin-right: 170px;
+}
+
+.result-home{
+  margin-left: 170px;
+}
+
+.home-image{
+  float:right;
+  width: 50%;
+  padding:150px;
+  padding-top: 0px;
+}
+
+.home-data{
+  float:left;
+  width:50%;
+}
