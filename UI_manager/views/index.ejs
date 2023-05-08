@@ -69,14 +69,17 @@ https://templatemo.com/tm-563-seo-dream
               <li class="scroll-to-section"><a href="#yourpipeline">Preview Pipeline</a></li>
               <li class="scroll-to-section"><a href="#history">History</a></li>
               <li class="scroll-to-section"><a href="#contact">Contact Us</a></li> 
-              <li class="scroll-to-section"><div class="main-blue-button"><a onclick="logoutUser()">Logout</a></div></li> 
+              <li class="scroll-to-section" id="logout-button"><div class="main-blue-button"><a id="logout-button" onclick="logoutUser()">Logout</a></div></li> 
+              <li class="username"><b><%= mobj[0].user_name %></b></li>
             </ul>        
-           
+            
             <a class='menu-trigger'>
                 <span>Menu</span>
             </a>
             <!-- ***** Menu End ***** -->
+            
           </nav>
+          
         </div>
       </div>
     </div>

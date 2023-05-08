@@ -253,7 +253,7 @@ app.get("/home", (req, res) => {
                   cdata:component_data
                 };
                 // res.render('index.ejs', {obj});
-                var multiObj = [{flag:"1", cdata: component_data, history: pipeline_data}];
+                var multiObj = [{flag:"1", cdata: component_data, history: pipeline_data, user_name: decoded.username }];
                 res.render('index.ejs', { mobj: multiObj } );
               }
               else{
@@ -262,7 +262,7 @@ app.get("/home", (req, res) => {
                   cdata:component_data
                 };
                 // res.render('index.ejs', {obj});
-                var multiObj = [{flag:"0", cdata: component_data, history: pipeline_data}];
+                var multiObj = [{flag:"0", cdata: component_data, history: pipeline_data, user_name: decoded.username }];
                 res.render('index.ejs', { mobj: multiObj } );
                 //res.render('index.ejs', data: {flag:"0", cdata: component_data});
               }

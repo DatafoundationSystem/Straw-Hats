@@ -1927,3 +1927,15 @@ Slide Show
   width: 20px;
   height: 20px;
 }
+
+.username{
+  margin-left: auto; 
+  margin-right: 0;
+  color: white;
+  font-size: larger;
+}
+
+#logout-button{
+  padding-bottom: 30px;
+  padding-top: 0px;
+}
