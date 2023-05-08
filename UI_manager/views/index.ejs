@@ -135,7 +135,7 @@ https://templatemo.com/tm-563-seo-dream
 
 
   <% if( mobj[0].flag == "1" ){ %>
-    <div class="upload-comp-class" id="setup" class="our-services section">
+    <div class="upload-comp-class" class="our-services section">
       <div class="container inner-comp">
         <div class="row">
           <div class="col-lg-6 offset-lg-3">
@@ -895,8 +895,18 @@ https://templatemo.com/tm-563-seo-dream
         'Content-Type': 'application/json'
       },
       body: JSON.stringify(sendData)
-    }).then(res =>{
-      window.location.href = '/viewResult/?name='+location.getItem('pipeline');
+    }).then((res) =>{
+      console.log("Hello world");
+      console.log(res);
+      // window.location.href = '/viewResult/?name='+localStorage.getItem('pipeline');
+      var link = document.createElement("a");
+      console.log(window.origin + '/viewResult/?name='+localStorage.getItem('pipeline'));
+      link.setAttribute('href', window.origin + '/viewResult/?name='+localStorage.getItem('pipeline'));
+      link.click();
+
+      
+      
+      
     })
       .catch(err => {
         console.log(err);
@@ -907,10 +917,13 @@ https://templatemo.com/tm-563-seo-dream
 
   function seturl(){
     var fileInput = document.getElementById('customFile');   
-    var pipeline = document.getElementById('pname');
+    var pipeline = document.getElementById('pname').value;
     var filename = fileInput.files[0].name;
+    var pilelineName = pipeline[0].value;
     console.log(typeof filename);
     console.log(filename);
+    console.log(typeof pipeline);
+    console.log(pipeline);
     try{
       localStorage.setItem('image',filename);
       localStorage.setItem('pipeline', pipeline);

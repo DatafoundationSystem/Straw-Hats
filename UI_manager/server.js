@@ -48,8 +48,8 @@ var minioClient = new Minio.Client({
   endPoint: '127.0.0.1',
   port: 9000,
   useSSL: false,
-  accessKey: '9QKx0lFAgwt0PBqi',
-  secretKey: 'vJ18iMajpBDKbuac8okG9W8b1okRFRT4'
+  accessKey: 'RzRZkFomebQ1QHLU',
+  secretKey: 'm2593hGdtyAHRdmqcTu8erPUf2wSn0bx'
 });
 
 app.listen(port, () => {
@@ -148,8 +148,8 @@ app.get("/home", (req, res) => {
       }
       // console.log(data[0]);
       if (data.length == 1){
-        console.log(data);
-        console.log(data[0].role);
+        // console.log(data);
+        // console.log(data[0].role);
 
         let comp_select_query = 'SELECT * FROM ??';
         let component_query = mysql.format( comp_select_query, ["dfs.components"]);
@@ -173,7 +173,7 @@ app.get("/home", (req, res) => {
             ]
             component_data.push(temp);
           }
-          console.log(component_data);
+          // console.log(component_data);
           if( user_role == 1 ){
             const obj = {
               flag:"1",
@@ -210,6 +210,7 @@ app.get("/home", (req, res) => {
 
 app.post("/upload", multer({storage: multer.memoryStorage()}).single("mypic"),function (req, res, next) {
   console.log(req.file);
+  console.log(req.body);
   try{
     decoded = jwt.verify(req.cookies['access_token'], 'SuperSecretKey');
   }catch(err){
@@ -226,8 +227,8 @@ app.post("/upload", multer({storage: multer.memoryStorage()}).single("mypic"),fu
     var oid = data[0].id+1;
     var uid = decoded.userid;
     var imgpath = String(oid) + '/' + req.file.originalname;
-    let insert_query = 'INSERT INTO dfs.operation(id,user_id,component_id,step,input,output)VALUES(?,?,0,0,?,?)';
-    insert_query = mysql.format(insert_query, [oid,uid,imgpath,imgpath]);
+    let insert_query = 'INSERT INTO dfs.operation(id,user_id,component_id,step,input,output,pipeline_name)VALUES(?,?,0,0,?,?,?)';
+    insert_query = mysql.format(insert_query, [oid,uid,imgpath,imgpath,req.body.pname]);
     console.log(insert_query);
     mysqlconnection.query(insert_query, (err,data)=>{
       if(err){
@@ -236,7 +237,7 @@ app.post("/upload", multer({storage: multer.memoryStorage()}).single("mypic"),fu
       }
       minioClient.putObject('uploads', imgpath, req.file.buffer, function(err, etag) {
         if (err) return console.log(err);
-        res.redirect('/home');
+        res.redirect('/home#toolbar');
       
         // popup.alert('Your File Uploaded');
         console.log('File uploaded successfully.');
@@ -348,10 +349,8 @@ app.post("/compUpload", multer({storage: multer.memoryStorage()}).single("inputF
           res.redirect('/')
         }
       });
-
-      
+ 
     }
-
     
   });
 })
@@ -378,7 +377,7 @@ app.post("/postjson", function (req, res) {
     console.log(data[0]);
     sendData = {
       oid : data[0].id,
-      pipeline: data[0].pipeline_name,
+      pipeline_name: data[0].pipeline_name,
       user_id: decoded.userid,
       imgpath: imgpath,
       pipeline: req.body.items
@@ -388,7 +387,8 @@ app.post("/postjson", function (req, res) {
       console.log("response recieved");
       // print(res);
       
-      res.redirect(`/viewResult/?name=${data[0].pipeline_name}`);
+      // res.redirect(`/viewResult/?name=${data[0].pipeline_name}`);
+      res.send({msg:"Pipeline executed sucessfully"});
     })
     .catch(err => console.log(err));
   });
@@ -400,8 +400,8 @@ app.post("/postjson", function (req, res) {
 app.get("/viewResult", (req, res) => {
     //res.render('result.ejs');
     console.log(req.query.name);
-
-    let op_id = 5;
+    // res.render('result.ejs');
+    let op_id = 11;
     let query = 'SELECT * FROM dfs.operation WHERE id = ? ORDER BY step';
     query = mysql.format(query, [op_id]);
     console.log(query);
@@ -411,17 +411,19 @@ app.get("/viewResult", (req, res) => {
   
     fs.access(path, (error) => {
       if (error) {
-        fs.mkdir(path, (error) => {
-          if (error) {
-            console.log(error);
+        fs.mkdir(path, (err) => {
+          if (err) {
+            console.log("Error Creating Directory.");
+            console.log(err);
           } 
           else {
             console.log("New Directory created successfully !!");
 
 
-            let send_data = []
+            let send_data = [];
             mysqlconnection.query(query, (err,data)=>{
               if(err){
+
                 console.log(err);
                 res.send("Error sending operation.");
               }
@@ -457,6 +459,7 @@ app.get("/viewResult", (req, res) => {
                   // download files from mino to local storage ===============================
                   minioClient.fGetObject( 'uploads' , image_name, local_path, function(err) {
                     if (err) {
+                        console.log("Error downloading");
                         return console.log(err);
                     }
                         console.log('success in file download');
@@ -468,16 +471,17 @@ app.get("/viewResult", (req, res) => {
               setTimeout(function temp(){
                 console.log( send_data );
                 console.log( send_data[0][2] );
+    
                 let old_path = './' + op_id;
                 let new_path = './public/display/' + op_id + '/';
                 fs1.move(old_path, new_path, err => {
                   if(err) return console.error(err);
                   console.log('success!');
                 });
+    
                 console.log("========== Data Send to front end =============");
                 res.render('result.ejs', { oper : send_data } );
               }, 2000);
-
 
             });
           }
