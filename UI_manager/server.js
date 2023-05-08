@@ -610,7 +610,7 @@ app.get("/viewResult", (req, res) => {
       
                   console.log("========== Data Send to front end =============");
                   res.render('result.ejs', { oper : send_data } );
-                }, 2000);
+                }, 4000);
 
               });
             }
@@ -683,7 +683,7 @@ app.get("/viewResult", (req, res) => {
 
               console.log("========== Data Send to front end =============");
               res.render('result.ejs', { oper : send_data } );
-            }, 2000);
+            }, 4000);
 
 
           });
