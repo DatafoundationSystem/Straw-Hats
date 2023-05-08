@@ -10,10 +10,10 @@ const cookie_parser = require('cookie-parser')
 const fs = require("fs");
 const fs1 = require('fs-extra');
 var rimraf = require("rimraf");
+const crypto = require('crypto');
 
 
 // const axios = require('axios')
-
 
 const app = express();
 var cors = require('cors');
@@ -44,6 +44,9 @@ mysqlconnection.connect(function(err){
   console.log('Connected to database.');
 });
 
+
+
+
 var minioClient = new Minio.Client({
   endPoint: '127.0.0.1',
   port: 9000,
@@ -51,6 +54,24 @@ var minioClient = new Minio.Client({
   accessKey: 'RzRZkFomebQ1QHLU',
   secretKey: 'm2593hGdtyAHRdmqcTu8erPUf2wSn0bx'
 });
+
+//Encrypting text
+function encrypt(text) {
+  const secret = 'Vishal8199';
+ 
+// Calling createHash method
+const hash = crypto.createHash('sha256', secret)
+                    
+                   // updating data
+                   .update(text)
+
+                   // Encoding to be used
+                   .digest('hex');
+ 
+console.log(hash);
+return hash;
+}
+
 
 app.listen(port, () => {
   console.log(`Application started and Listening on port ${port}`);
@@ -94,9 +115,12 @@ app.post("/", function(req,res){
       console.log(1);
       res.render('login.ejs', {msg: "User doesn't exists. Try again!"});
     }else{ 
-      console.log(data[0]);
+      // console.log(data[0]);
       // console.log(data[0].pass);
-      if(data[0].pass == password){
+      hashed_pass = encrypt(password)
+      // console.log(hashed_pass)
+      // console.log(data[0].pass)
+      if(hashed_pass == data[0].pass){
         // set cookie
         console.log(2);
         var token = jwt.sign({username : username, userid:data[0].user_id}, "SuperSecretKey", {expiresIn : 86400});
@@ -120,6 +144,72 @@ app.post("/", function(req,res){
   });
 })
 
+
+app.get('/signup', (req,res)=>{
+  res.render('signup.ejs', {msg: ""});
+});
+
+
+app.post("/signup", function(req,res){
+  username = req.body.user.name;
+  password = req.body.user.password;
+  role = req.body.user.role;
+  confirm_password = req.body.user.cpassword;
+  
+  console.log(req.body.user)
+
+  if(password!=confirm_password){
+    console.log(1)
+    res.render('signup.ejs', {msg: "Password Not matched"});
+    return;
+  }
+    let r=0;
+    if(role=="Admin")r=1;
+    else r=2;
+
+    AES_encrypted_hash = encrypt(password)
+    let insert_query = 'INSERT INTO dfs.users (username,pass,role) VALUES (?,?,?)';
+    let query = mysql.format(insert_query, [username,AES_encrypted_hash,r]);
+    console.log(query);
+
+    mysqlconnection.query(query, (err,data)=>{
+      if(err){
+        console.log(err);
+        res.render('signup.ejs', {msg: "User Name already exists. Try again !!"});
+      }
+
+      let select_query = 'SELECT * FROM ?? WHERE ?? = ?';
+      let query = mysql.format(select_query, ["dfs.users", "username", username]);
+
+      mysqlconnection.query(query, (err,data)=>{
+        if(err){
+          console.log(err);
+          return;
+        }
+
+      var token = jwt.sign({username : username, userid:data[0].user_id}, "SuperSecretKey", {expiresIn : 86400});
+        console.log(token);
+        
+        res
+        .status(200)
+        .cookie("access_token" , token, {
+          httpOnly:true,
+        })
+        .redirect('/home');
+      });
+      return;
+
+    });
+    
+})
+
+app.get('/logout', (req,res)=>{
+  res.clearCookie('access_token');
+  res.redirect("/")
+});
+
+
+
 app.get("/home", (req, res) => {
   console.log(req.cookies['access_token']);
   if(!req.cookies['access_token']){
@@ -135,71 +225,84 @@ app.get("/home", (req, res) => {
     console.log(decoded.username);
 
     // Fetch History
-    // let hist_query = 'SELECT ?? FROM ??'
-    // let pipeline_query = mysql.format( hist_query, [ "pipeline_name", "dfs.operation" ] );
+    let hist_query = 'SELECT ?? FROM ?? WHERE ?? = ? GROUP BY ??'
+    let pipeline_query = mysql.format( hist_query, [ "pipeline_name", "dfs.operation", "user_id", decoded.userid, "id" ] );
+    console.log(pipeline_query);
 
-    let select_query = 'SELECT * FROM ?? WHERE ?? = ?';
-    let query = mysql.format(select_query, ["dfs.users", "username", decoded.username]);
-
-    mysqlconnection.query(query, (err,data)=>{
+    mysqlconnection.query(pipeline_query, (err,pipeline_data)=>{
       if(err){
         console.log(err);
         return;
       }
-      // console.log(data[0]);
-      if (data.length == 1){
-        // console.log(data);
-        // console.log(data[0].role);
+      else{
+        console.log( pipeline_data );
 
-        let comp_select_query = 'SELECT * FROM ??';
-        let component_query = mysql.format( comp_select_query, ["dfs.components"]);
-        let user_role = data[0].role;
+        let select_query = 'SELECT * FROM ?? WHERE ?? = ?';
+        let query = mysql.format(select_query, ["dfs.users", "username", decoded.username]);
 
-
-        mysqlconnection.query(component_query, (err,data)=>{
+        mysqlconnection.query(query, (err,data)=>{
           if(err){
             console.log(err);
             return;
           }
+          // console.log(data[0]);
+          if (data.length == 1){
+            console.log(data);
+            console.log(data[0].role);
 
-          let component_data = []
+            let comp_select_query = 'SELECT * FROM ??';
+            let component_query = mysql.format( comp_select_query, ["dfs.components"]);
+            let user_role = data[0].role;
 
-          for (let i = 0; i < data.length; i++) {
-            // text += "The number is " + i + "<br>";
-            let temp = [
-              data[i].id, //cid
-              data[i].name, //cname
-              data[i].description //cdesc
-            ]
-            component_data.push(temp);
-          }
-          // console.log(component_data);
-          if( user_role == 1 ){
-            const obj = {
-              flag:"1",
-              cdata:component_data
-            };
-            // res.render('index.ejs', {obj});
-            var multiObj = [{flag:"1", cdata: component_data}];
-            res.render('index.ejs', { mobj: multiObj } );
-          }
-          else{
-            const obj = {
-              flag:"0",
-              cdata:component_data
-            };
-            // res.render('index.ejs', {obj});
-            var multiObj = [{flag:"0", cdata: component_data}];
-            res.render('index.ejs', { mobj: multiObj } );
-            //res.render('index.ejs', data: {flag:"0", cdata: component_data});
+
+            mysqlconnection.query(component_query, (err,data)=>{
+              if(err){
+                console.log(err);
+                return;
+              }
+
+              let component_data = []
+
+              for (let i = 0; i < data.length; i++) {
+                // text += "The number is " + i + "<br>";
+                let temp = [
+                  data[i].id, //cid
+                  data[i].name, //cname
+                  data[i].description //cdesc
+                ]
+                component_data.push(temp);
+              }
+              console.log(component_data);
+              if( user_role == 1 ){
+                const obj = {
+                  flag:"1",
+                  cdata:component_data
+                };
+                // res.render('index.ejs', {obj});
+                var multiObj = [{flag:"1", cdata: component_data, history: pipeline_data, user_name: decoded.username }];
+                res.render('index.ejs', { mobj: multiObj } );
+              }
+              else{
+                const obj = {
+                  flag:"0",
+                  cdata:component_data
+                };
+                // res.render('index.ejs', {obj});
+                var multiObj = [{flag:"0", cdata: component_data, history: pipeline_data, user_name: decoded.username }];
+                res.render('index.ejs', { mobj: multiObj } );
+                //res.render('index.ejs', data: {flag:"0", cdata: component_data});
+              }
+            });
+
+
+          }else{ 
+            res.redirect('/')
           }
         });
 
-
-      }else{ 
-        res.redirect('/')
       }
     });
+    
 
     // let comp_query = 'SELECT * FROM ?? ';
     // let comp_ret_query = mysql.formal( comp_query, [ "components" ] );
@@ -560,3 +663,7 @@ app.get("/viewResult", (req, res) => {
       }
     }); 
 });
+
+
+
+
