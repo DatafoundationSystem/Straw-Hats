@@ -25,6 +25,7 @@
     <link rel="stylesheet" href="/css/main.css">
     <link rel="stylesheet" href="/css/animated.css">
     <link rel="stylesheet" href="/css/owl.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.5/dist/sweetalert2.min.css" integrity="sha256-aUL5sUzmON2yonFVjFCojGULVNIOaPxlH648oUtA/ng=" crossorigin="anonymous">
 <!--
 
 TemplateMo 563 SEO Dream
@@ -394,6 +395,12 @@ https://templatemo.com/tm-563-seo-dream
           <!-- <p><a rel="nofollow" href="https://templatemo.com/tm-563-seo-dream" target="_parent">SEO Dream</a> is free digital marketing CSS template provided by TemplateMo website. You are allowed to use this template for your business websites. Please DO NOT redistribute this template ZIP file on any Free CSS collection websites. You may contact us for more information. Thank you.</p> -->
           <br>
           <div href="/viewResult" class="main-green-button"><a onclick="sendPipeline()">View Intermediate Results</a></div>
+
+          <!-- pop up -->
+          
+
+
+
         </div>
       </div>
     </div>
@@ -657,6 +664,7 @@ https://templatemo.com/tm-563-seo-dream
   <script src="/js/animation.js"></script>
   <script src="/js/imagesloaded.js"></script>
   <script src="/js/custom.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.5/dist/sweetalert2.all.min.js" integrity="sha256-9AtIfusxXi0j4zXdSxRiZFn0g22OBdlTO4Bdsc2z/tY=" crossorigin="anonymous"></script>
   
 </body>
 <script>
@@ -691,14 +699,37 @@ https://templatemo.com/tm-563-seo-dream
       console.log("Hello world");
       console.log(res);
       // window.location.href = '/viewResult/?name='+localStorage.getItem('pipeline');
+      //alert('Are you sure you want to see the results!');
+
+      // pop up box =====================
+      let timerInterval
+      Swal.fire({
+        title: 'Executing the Pipeline',
+        html: 'I will close in <b></b> milliseconds.',
+        timer: sendData.items.length * 1000,
+        timerProgressBar: true,
+        didOpen: () => {
+          Swal.showLoading()
+          const b = Swal.getHtmlContainer().querySelector('b')
+          timerInterval = setInterval(() => {
+            b.textContent = sendData.items[ abs(Swal.getTimerLeft() - 4000)/1000]
+          }, 1000)
+        },
+        willClose: () => {
+          clearInterval(timerInterval)
+        }
+      }).then((result) => {
+        /* Read more about handling dismissals below */
+        if (result.dismiss === Swal.DismissReason.timer) {
+          console.log('I was closed by the timer')
+        }
+      })
+
       var link = document.createElement("a");
       console.log(window.origin + '/viewResult/?name='+localStorage.getItem('pipeline'));
       link.setAttribute('href', window.origin + '/viewResult/?name='+localStorage.getItem('pipeline'));
       link.click();
 
-      
-      
-      
     })
       .catch(err => {
         console.log(err);

@@ -474,7 +474,7 @@ app.post("/postjson", function (req, res) {
   mysqlconnection.query(query, (err,data)=>{
     if(err){
       console.log(err);
-      res.send("Error sending pipeline.");
+      //res.send("Error sending pipeline.");
     }
     console.log(req.body);
     var imgpath = String(data[0].id) + '/' + req.body.image;
@@ -503,15 +503,17 @@ app.post("/postjson", function (req, res) {
 
 app.get("/viewResult", (req, res) => {
     //res.render('result.ejs');
-    console.log(req.query.name);
-    console.log("Current directory:", __dirname);
+    // console.log(req.query.name);
+    // console.log("Current directory:", __dirname);
+
+    console.log("======================== /viewResult ==========================");
 
     try{
       decoded = jwt.verify(req.cookies['access_token'], 'SuperSecretKey');
     }catch(err){
       res.redirect('/');
     } 
-    console.log(decoded.userid);
+    // console.log(decoded.userid);
 
     let pipeline_name = req.query.name;
 
@@ -520,17 +522,18 @@ app.get("/viewResult", (req, res) => {
 
     mysqlconnection.query( get_op_id, (err, op_data)=>{
       if(err){
+        console.log("======================== get operation id from pipeline name error ==========================");
         console.log(err);
         res.send("Error sending component name.");
       }
-      console.log( op_data[0].id );
+      // console.log( op_data[0].id );
 
 
       
       let op_id = op_data[0].id;
       let query = 'SELECT * FROM dfs.operation WHERE id = ? ORDER BY step';
       query = mysql.format(query, [op_id]);
-      console.log(query);
+      // console.log(query);
 
       // create dir on local system
       const path = "./public/display/" + op_id;
@@ -539,11 +542,11 @@ app.get("/viewResult", (req, res) => {
         if (error) {
           fs.mkdir(path, (err) => {
             if (err) {
-              console.log("Error Creating Directory.");
+              console.log("======================= Error Creating Directory.=============================");
               console.log(err);
             } 
             else {
-              console.log("New Directory created successfully !!");
+              console.log(">> New Directory created successfully !!");
 
 
               let send_data = [];
@@ -588,7 +591,7 @@ app.get("/viewResult", (req, res) => {
                           console.log("Error downloading");
                           return console.log(err);
                       }
-                          console.log('success in file download');
+                          console.log('==============success in file download');
                       })
 
                   });
@@ -596,13 +599,13 @@ app.get("/viewResult", (req, res) => {
                 
                 setTimeout(function temp(){
                   console.log( send_data );
-                  console.log( send_data[0][2] );
+                  // console.log( send_data[0][2] );
       
                   let old_path = './' + op_id;
                   let new_path = './public/display/' + op_id + '/';
                   fs1.move(old_path, new_path, err => {
                     if(err) return console.error(err);
-                    console.log('success!');
+                    console.log('===================== success in move file!');
                   });
       
                   console.log("========== Data Send to front end =============");
@@ -614,7 +617,7 @@ app.get("/viewResult", (req, res) => {
           });
         } 
         else {
-          console.log("Given Directory already exists !!");
+          // console.log("Given Directory already exists !!");
           let delete_path = './public/display/' + op_id;
           rimraf( delete_path , function () { console.log("done"); });
 
@@ -669,7 +672,7 @@ app.get("/viewResult", (req, res) => {
             
             setTimeout(function temp(){
               console.log( send_data );
-              console.log( send_data[0][2] );
+              // console.log( send_data[0][2] );
 
               let old_path = './' + op_id;
               let new_path = './public/display/' + op_id + '/';
