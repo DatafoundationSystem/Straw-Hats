@@ -51,8 +51,8 @@ var minioClient = new Minio.Client({
   endPoint: '127.0.0.1',
   port: 9000,
   useSSL: false,
-  accessKey: 'RzRZkFomebQ1QHLU',
-  secretKey: 'm2593hGdtyAHRdmqcTu8erPUf2wSn0bx'
+  accessKey: '9QKx0lFAgwt0PBqi',
+  secretKey: 'vJ18iMajpBDKbuac8okG9W8b1okRFRT4'
 });
 
 //Encrypting text
@@ -357,6 +357,7 @@ app.post("/compUpload", multer({storage: multer.memoryStorage()}).single("inputF
   console.log( req.body.cname );
   console.log( req.body.description );    
   
+
   let comp_name = req.body.cname;
   let comp_desc = req.body.description;
   
@@ -504,165 +505,192 @@ app.get("/viewResult", (req, res) => {
     //res.render('result.ejs');
     console.log(req.query.name);
     console.log("Current directory:", __dirname);
-    let op_id = 5;
-    let query = 'SELECT * FROM dfs.operation WHERE id = ? ORDER BY step';
-    query = mysql.format(query, [op_id]);
-    console.log(query);
 
-    // create dir on local system
-    const path = "./public/display/" + op_id;
-  
-    fs.access(path, (error) => {
-      if (error) {
-        fs.mkdir(path, (err) => {
-          if (err) {
-            console.log("Error Creating Directory.");
-            console.log(err);
-          } 
-          else {
-            console.log("New Directory created successfully !!");
+    try{
+      decoded = jwt.verify(req.cookies['access_token'], 'SuperSecretKey');
+    }catch(err){
+      res.redirect('/');
+    } 
+    console.log(decoded.userid);
 
+    let pipeline_name = req.query.name;
 
-            let send_data = [];
-            mysqlconnection.query(query, (err,data)=>{
-              if(err){
+    let get_op_id = 'SELECT ?? FROM ?? WHERE ?? = ? AND ?? = ?';
+    get_op_id = mysql.format( get_op_id, ["id", "dfs.operation", "pipeline_name", pipeline_name, "user_id", decoded.userid] );
 
-                console.log(err);
-                res.send("Error sending operation.");
-              }
-              console.log( data );
-              
-              for(var i = 0; i < data.length ; i++){
-
-                let cname_query = 'SELECT name FROM dfs.components WHERE id = ?';
-                cname_query = mysql.format( cname_query, [ data[i].component_id ] );
-                
-                let oid = data[i].id;
-                let step = data[i].step;
-                let image_name = data[i].output;
-
-                mysqlconnection.query( cname_query, (err,data1)=>{
-                  if(err){
-                    console.log(err);
-                    res.send("Error sending component name.");
-                  }
-                  //console.log( data1[0].name );
-                  //console.log( data[i].step );
-
-                  let image_path = '/display/' + image_name;
-                  let cur_data = [
-                    oid, // operation id
-                    step, // step
-                    image_path, // image name
-                    data1[0].name // component name
-                  ]
-                  send_data.push( cur_data );
-
-                  let local_path = __dirname + '/public' + image_path;
-                  // download files from mino to local storage ===============================
-                  minioClient.fGetObject( 'uploads' , image_name, local_path, function(err) {
-                    if (err) {
-                        console.log("Error downloading");
-                        return console.log(err);
-                    }
-                        console.log('success in file download');
-                    })
-
-                });
-              }
-              
-              setTimeout(function temp(){
-                console.log( send_data );
-                console.log( send_data[0][2] );
-    
-                let old_path = './' + op_id;
-                let new_path = './public/display/' + op_id + '/';
-                fs1.move(old_path, new_path, err => {
-                  if(err) return console.error(err);
-                  console.log('success!');
-                });
-    
-                console.log("========== Data Send to front end =============");
-                res.render('result.ejs', { oper : send_data } );
-              }, 2000);
-
-            });
-          }
-        });
-      } 
-      else {
-        console.log("Given Directory already exists !!");
-        let delete_path = './public/display/' + op_id;
-        rimraf( delete_path , function () { console.log("done"); });
-
-        let send_data = []
-        mysqlconnection.query(query, (err,data)=>{
-          if(err){
-            console.log(err);
-            res.send("Error sending operation.");
-          }
-          console.log( data );
-          
-          for(var i = 0; i < data.length ; i++){
-
-            let cname_query = 'SELECT name FROM dfs.components WHERE id = ?';
-            cname_query = mysql.format( cname_query, [ data[i].component_id ] );
-            
-            let oid = data[i].id;
-            let step = data[i].step;
-            let image_name = data[i].output;
-
-            mysqlconnection.query( cname_query, (err,data1)=>{
-              if(err){
-                console.log(err);
-                res.send("Error sending component name."); 
-              }
-              //console.log( data1[0].name );
-              //console.log( data[i].step );
-
-              let image_path = '/display/' + image_name;
-              let cur_data = [
-                oid, // operation id
-                step, // step
-                image_path, // image name
-                data1[0].name // component name
-              ]
-              send_data.push( cur_data );
-
-              //let local_path = '/temp' + image_path;
-              
-              // download files from mino to local storage ===============================
-              let local_path = __dirname + '/public' + image_path;
-              minioClient.fGetObject( 'uploads' , image_name, local_path, function(err) {
-                if (err) {
-                    return console.log(err);
-                }
-                    console.log('success in file download');
-              })
-
-
-            });
-          }
-          
-          setTimeout(function temp(){
-            console.log( send_data );
-            console.log( send_data[0][2] );
-
-            let old_path = './' + op_id;
-            let new_path = './public/display/' + op_id + '/';
-            fs1.move(old_path, new_path, err => {
-              if(err) return console.error(err);
-              console.log('success!');
-            });
-
-            console.log("========== Data Send to front end =============");
-            res.render('result.ejs', { oper : send_data } );
-          }, 2000);
-
-
-        });
+    mysqlconnection.query( get_op_id, (err, op_data)=>{
+      if(err){
+        console.log(err);
+        res.send("Error sending component name.");
       }
-    }); 
+      console.log( op_data[0].id );
+
+
+      
+      let op_id = op_data[0].id;
+      let query = 'SELECT * FROM dfs.operation WHERE id = ? ORDER BY step';
+      query = mysql.format(query, [op_id]);
+      console.log(query);
+
+      // create dir on local system
+      const path = "./public/display/" + op_id;
+    
+      fs.access(path, (error) => {
+        if (error) {
+          fs.mkdir(path, (err) => {
+            if (err) {
+              console.log("Error Creating Directory.");
+              console.log(err);
+            } 
+            else {
+              console.log("New Directory created successfully !!");
+
+
+              let send_data = [];
+              mysqlconnection.query(query, (err,data)=>{
+                if(err){
+
+                  console.log(err);
+                  res.send("Error sending operation.");
+                }
+                console.log( data );
+                
+                for(var i = 0; i < data.length ; i++){
+
+                  let cname_query = 'SELECT name FROM dfs.components WHERE id = ?';
+                  cname_query = mysql.format( cname_query, [ data[i].component_id ] );
+                  
+                  let oid = data[i].id;
+                  let step = data[i].step;
+                  let image_name = data[i].output;
+
+                  mysqlconnection.query( cname_query, (err,data1)=>{
+                    if(err){
+                      console.log(err);
+                      res.send("Error sending component name.");
+                    }
+                    //console.log( data1[0].name );
+                    //console.log( data[i].step );
+
+                    let image_path = '/display/' + image_name;
+                    let cur_data = [
+                      oid, // operation id
+                      step, // step
+                      image_path, // image name
+                      data1[0].name // component name
+                    ]
+                    send_data.push( cur_data );
+
+                    let local_path = __dirname + '/public' + image_path;
+                    // download files from mino to local storage ===============================
+                    minioClient.fGetObject( 'uploads' , image_name, local_path, function(err) {
+                      if (err) {
+                          console.log("Error downloading");
+                          return console.log(err);
+                      }
+                          console.log('success in file download');
+                      })
+
+                  });
+                }
+                
+                setTimeout(function temp(){
+                  console.log( send_data );
+                  console.log( send_data[0][2] );
+      
+                  let old_path = './' + op_id;
+                  let new_path = './public/display/' + op_id + '/';
+                  fs1.move(old_path, new_path, err => {
+                    if(err) return console.error(err);
+                    console.log('success!');
+                  });
+      
+                  console.log("========== Data Send to front end =============");
+                  res.render('result.ejs', { oper : send_data } );
+                }, 2000);
+
+              });
+            }
+          });
+        } 
+        else {
+          console.log("Given Directory already exists !!");
+          let delete_path = './public/display/' + op_id;
+          rimraf( delete_path , function () { console.log("done"); });
+
+          let send_data = []
+          mysqlconnection.query(query, (err,data)=>{
+            if(err){
+              console.log(err);
+              res.send("Error sending operation.");
+            }
+            console.log( data );
+            
+            for(var i = 0; i < data.length ; i++){
+
+              let cname_query = 'SELECT name FROM dfs.components WHERE id = ?';
+              cname_query = mysql.format( cname_query, [ data[i].component_id ] );
+              
+              let oid = data[i].id;
+              let step = data[i].step;
+              let image_name = data[i].output;
+
+              mysqlconnection.query( cname_query, (err,data1)=>{
+                if(err){
+                  console.log(err);
+                  res.send("Error sending component name."); 
+                }
+                //console.log( data1[0].name );
+                //console.log( data[i].step );
+
+                let image_path = '/display/' + image_name;
+                let cur_data = [
+                  oid, // operation id
+                  step, // step
+                  image_path, // image name
+                  data1[0].name // component name
+                ]
+                send_data.push( cur_data );
+
+                //let local_path = '/temp' + image_path;
+                
+                // download files from mino to local storage ===============================
+                let local_path = __dirname + '/public' + image_path;
+                minioClient.fGetObject( 'uploads' , image_name, local_path, function(err) {
+                  if (err) {
+                      return console.log(err);
+                  }
+                      console.log('success in file download');
+                })
+
+
+              });
+            }
+            
+            setTimeout(function temp(){
+              console.log( send_data );
+              console.log( send_data[0][2] );
+
+              let old_path = './' + op_id;
+              let new_path = './public/display/' + op_id + '/';
+              fs1.move(old_path, new_path, err => {
+                if(err) return console.error(err);
+                console.log('success!');
+              });
+
+              console.log("========== Data Send to front end =============");
+              res.render('result.ejs', { oper : send_data } );
+            }, 2000);
+
+
+          });
+        }
+      }); 
+
+
+    });
+
+    
 });
 
 
