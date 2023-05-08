@@ -532,7 +532,7 @@ app.get("/viewResult", (req, res) => {
 
                   let local_path = __dirname + '/public' + image_path;
                   // download files from mino to local storage ===============================
-                  minioClient.fGetObject( 'uploads' , image_name, image_name, function(err) {
+                  minioClient.fGetObject( 'uploads' , image_name, local_path, function(err) {
                     if (err) {
                         return console.log(err);
                     }
@@ -602,7 +602,8 @@ app.get("/viewResult", (req, res) => {
               //let local_path = '/temp' + image_path;
               
               // download files from mino to local storage ===============================
-              minioClient.fGetObject( 'uploads' , image_name, image_name, function(err) {
+              let local_path = __dirname + '/public' + image_path;
+              minioClient.fGetObject( 'uploads' , image_name, local_path, function(err) {
                 if (err) {
                     return console.log(err);
                 }
