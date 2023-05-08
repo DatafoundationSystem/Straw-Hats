@@ -1,4 +1,3 @@
-//Upload index.zip on minio before running this file
 
 const express = require("express");
 const app = express();
@@ -9,7 +8,7 @@ const decompress = require("decompress");
 
 app.use(express.json())
 
-// MY sql conection
+// My sql conection
 var connection = mysql.createConnection({
   host     : "dfs-node-db.c6zbhfwprabi.eu-north-1.rds.amazonaws.com",
   user     : "admin",
@@ -18,6 +17,8 @@ var connection = mysql.createConnection({
   timeout  : 60000
 });
 
+
+// MinIO client creation
 var minioClient = new Minio.Client({
   endPoint: '127.0.0.1',
   port: 9000,
