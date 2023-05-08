@@ -10,6 +10,7 @@ const cookie_parser = require('cookie-parser')
 const fs = require("fs");
 const fs1 = require('fs-extra');
 var rimraf = require("rimraf");
+const crypto = require('crypto');
 
 
 // const axios = require('axios')
@@ -43,13 +44,34 @@ mysqlconnection.connect(function(err){
   console.log('Connected to database.');
 });
 
+
+
+
 var minioClient = new Minio.Client({
   endPoint: '127.0.0.1',
   port: 9000,
   useSSL: false,
-  accessKey: '9QKx0lFAgwt0PBqi',
-  secretKey: 'vJ18iMajpBDKbuac8okG9W8b1okRFRT4'
+  accessKey: 'RzRZkFomebQ1QHLU',
+  secretKey: 'm2593hGdtyAHRdmqcTu8erPUf2wSn0bx'
 });
+
+//Encrypting text
+function encrypt(text) {
+  const secret = 'Vishal8199';
+ 
+// Calling createHash method
+const hash = crypto.createHash('sha256', secret)
+                    
+                   // updating data
+                   .update(text)
+
+                   // Encoding to be used
+                   .digest('hex');
+ 
+console.log(hash);
+return hash;
+}
+
 
 app.listen(port, () => {
   console.log(`Application started and Listening on port ${port}`);
@@ -93,9 +115,12 @@ app.post("/", function(req,res){
       console.log(1);
       res.render('login.ejs', {msg: "User doesn't exists. Try again!"});
     }else{ 
-      console.log(data[0]);
+      // console.log(data[0]);
       // console.log(data[0].pass);
-      if(data[0].pass == password){
+      hashed_pass = encrypt(password)
+      // console.log(hashed_pass)
+      // console.log(data[0].pass)
+      if(hashed_pass == data[0].pass){
         // set cookie
         console.log(2);
         var token = jwt.sign({username : username, userid:data[0].user_id}, "SuperSecretKey", {expiresIn : 86400});
@@ -142,8 +167,9 @@ app.post("/signup", function(req,res){
     if(role=="Admin")r=1;
     else r=2;
 
+    AES_encrypted_hash = encrypt(password)
     let insert_query = 'INSERT INTO dfs.users (username,pass,role) VALUES (?,?,?)';
-    let query = mysql.format(insert_query, [username,password,r]);
+    let query = mysql.format(insert_query, [username,AES_encrypted_hash,r]);
     console.log(query);
 
     mysqlconnection.query(query, (err,data)=>{
@@ -287,6 +313,7 @@ app.get("/home", (req, res) => {
 
 app.post("/upload", multer({storage: multer.memoryStorage()}).single("mypic"),function (req, res, next) {
   console.log(req.file);
+  console.log(req.body);
   try{
     decoded = jwt.verify(req.cookies['access_token'], 'SuperSecretKey');
   }catch(err){
@@ -303,8 +330,8 @@ app.post("/upload", multer({storage: multer.memoryStorage()}).single("mypic"),fu
     var oid = data[0].id+1;
     var uid = decoded.userid;
     var imgpath = String(oid) + '/' + req.file.originalname;
-    let insert_query = 'INSERT INTO dfs.operation(id,user_id,component_id,step,input,output)VALUES(?,?,0,0,?,?)';
-    insert_query = mysql.format(insert_query, [oid,uid,imgpath,imgpath]);
+    let insert_query = 'INSERT INTO dfs.operation(id,user_id,component_id,step,input,output,pipeline_name)VALUES(?,?,0,0,?,?,?)';
+    insert_query = mysql.format(insert_query, [oid,uid,imgpath,imgpath,req.body.pname]);
     console.log(insert_query);
     mysqlconnection.query(insert_query, (err,data)=>{
       if(err){
@@ -313,7 +340,7 @@ app.post("/upload", multer({storage: multer.memoryStorage()}).single("mypic"),fu
       }
       minioClient.putObject('uploads', imgpath, req.file.buffer, function(err, etag) {
         if (err) return console.log(err);
-        res.redirect('/home');
+        res.redirect('/home#toolbar');
       
         // popup.alert('Your File Uploaded');
         console.log('File uploaded successfully.');
@@ -425,10 +452,8 @@ app.post("/compUpload", multer({storage: multer.memoryStorage()}).single("inputF
           res.redirect('/')
         }
       });
-
-      
+ 
     }
-
     
   });
 })
@@ -455,7 +480,7 @@ app.post("/postjson", function (req, res) {
     console.log(data[0]);
     sendData = {
       oid : data[0].id,
-      pipeline: data[0].pipeline_name,
+      pipeline_name: data[0].pipeline_name,
       user_id: decoded.userid,
       imgpath: imgpath,
       pipeline: req.body.items
@@ -465,7 +490,8 @@ app.post("/postjson", function (req, res) {
       console.log("response recieved");
       // print(res);
       
-      res.redirect(`/viewResult/?name=${data[0].pipeline_name}`);
+      // res.redirect(`/viewResult/?name=${data[0].pipeline_name}`);
+      res.send({msg:"Pipeline executed sucessfully"});
     })
     .catch(err => console.log(err));
   });
@@ -488,17 +514,19 @@ app.get("/viewResult", (req, res) => {
   
     fs.access(path, (error) => {
       if (error) {
-        fs.mkdir(path, (error) => {
-          if (error) {
-            console.log(error);
+        fs.mkdir(path, (err) => {
+          if (err) {
+            console.log("Error Creating Directory.");
+            console.log(err);
           } 
           else {
             console.log("New Directory created successfully !!");
 
 
-            let send_data = []
+            let send_data = [];
             mysqlconnection.query(query, (err,data)=>{
               if(err){
+
                 console.log(err);
                 res.send("Error sending operation.");
               }
@@ -534,6 +562,7 @@ app.get("/viewResult", (req, res) => {
                   // download files from mino to local storage ===============================
                   minioClient.fGetObject( 'uploads' , image_name, local_path, function(err) {
                     if (err) {
+                        console.log("Error downloading");
                         return console.log(err);
                     }
                         console.log('success in file download');
@@ -545,16 +574,17 @@ app.get("/viewResult", (req, res) => {
               setTimeout(function temp(){
                 console.log( send_data );
                 console.log( send_data[0][2] );
+    
                 let old_path = './' + op_id;
                 let new_path = './public/display/' + op_id + '/';
                 fs1.move(old_path, new_path, err => {
                   if(err) return console.error(err);
                   console.log('success!');
                 });
+    
                 console.log("========== Data Send to front end =============");
                 res.render('result.ejs', { oper : send_data } );
               }, 2000);
-
 
             });
           }
