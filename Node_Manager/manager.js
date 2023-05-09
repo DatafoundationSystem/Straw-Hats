@@ -23,8 +23,8 @@ var minioClient = new Minio.Client({
   endPoint: '127.0.0.1',
   port: 9000,
   useSSL: false,
-  accessKey: 'EitPADwoAUvkzhs6',
-  secretKey: 'g82ahUIxSAhtIJeCoLWTV1YrONFpjTop'
+  accessKey: '9QKx0lFAgwt0PBqi',
+  secretKey: 'vJ18iMajpBDKbuac8okG9W8b1okRFRT4'
 });
 
 
@@ -47,7 +47,7 @@ app.post('/deploy', (req,res)=>{
     var size = 0
 
     // Component Zip file downloaded from minio
-    minioClient.fGetObject('uploads', component_file_name, component_file_name, function(err) {
+    minioClient.fGetObject('comp-upload', component_file_name, component_file_name, function(err) {
     if (err) {
       return console.log(err);
     }
@@ -56,7 +56,7 @@ app.post('/deploy', (req,res)=>{
 
 
     // Index Zip file downloaded from minio
-    minioClient.fGetObject('uploads', "index.zip", "index.zip", function(err) {
+    minioClient.fGetObject('comp-upload', "index.zip", "index.zip", function(err) {
       if (err) {
         return console.log(err);
       }
