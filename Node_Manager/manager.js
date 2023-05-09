@@ -18,6 +18,7 @@ var connection = mysql.createConnection({
 });
 
 
+
 // MinIO client creation
 var minioClient = new Minio.Client({
   endPoint: '127.0.0.1',
@@ -27,6 +28,22 @@ var minioClient = new Minio.Client({
   secretKey: 'g82ahUIxSAhtIJeCoLWTV1YrONFpjTop'
 });
 
+app.get('/health', (req,res)=>{
+  res.send("Hi");
+
+});
+
+app.get('/redeploy/:port', (req,res)=>{
+  console.log(req.params["port"]);
+  const spawn = require('child_process').spawn;
+        spawn('npm', ['start'], {
+          cwd: "../Scheduler/",        // <--- 
+          shell: true,
+          stdio: 'inherit'
+        });
+
+  res.send("Hi");
+});
 
 app.get('/', (req,res)=>{
   res.send("Hello World.")
