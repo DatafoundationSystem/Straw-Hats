@@ -14,8 +14,8 @@ if __name__ == '__main__':
         # "play.min.io",
         "127.0.0.1:9000",
         secure=False,
-        access_key = 'RzRZkFomebQ1QHLU',
-        secret_key = 'm2593hGdtyAHRdmqcTu8erPUf2wSn0bx'
+        access_key = '9QKx0lFAgwt0PBqi',
+        secret_key = 'vJ18iMajpBDKbuac8okG9W8b1okRFRT4'
     )
 
     image_url = sys.argv[1]
