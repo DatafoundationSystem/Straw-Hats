@@ -51,8 +51,8 @@ var minioClient = new Minio.Client({
   endPoint: '127.0.0.1',
   port: 9000,
   useSSL: false,
-  accessKey: 'EitPADwoAUvkzhs6',
-  secretKey: 'g82ahUIxSAhtIJeCoLWTV1YrONFpjTop'
+  accessKey: '9QKx0lFAgwt0PBqi',
+  secretKey: 'vJ18iMajpBDKbuac8okG9W8b1okRFRT4'
 });
 
 //Encrypting text
@@ -266,7 +266,7 @@ app.get("/home", (req, res) => {
 
               let component_data = []
 
-              for (let i = 0; i < data.length; i++) {
+              for (let i = 1; i < data.length; i++) {
                 // text += "The number is " + i + "<br>";
                 let temp = [
                   data[i].id, //cid

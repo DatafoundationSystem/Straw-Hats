@@ -986,7 +986,7 @@ upload component
   /* margin-top: 50px; */
   margin: auto;
   height: 700px;
-  padding-top: 120px;
+  padding-top: 110px;
   background-image: url(../images/contact-bg.jpg);
   background-repeat: no-repeat;
   background-position: center center;
@@ -1000,7 +1000,7 @@ upload component
   margin: auto;
   background-color: white;
   border-radius: 30px;
-  padding-top: 50px;
+  padding-top: 35px;
 }
 
 .zip-text{
@@ -1959,4 +1959,22 @@ Slide Show
 .home-data{
   float:left;
   width:50%;
+}
+
+#pname{
+  border: 2px solid #95989c;
+  border-radius: 7px;
+  padding: 5px;
+}
+
+#cname{
+  border: 2px solid #95989c;
+  border-radius: 7px;
+  padding: 5px;
+}
+
+#description{
+  border: 2px solid #95989c;
+  border-radius: 7px;
+  padding: 5px;
 }

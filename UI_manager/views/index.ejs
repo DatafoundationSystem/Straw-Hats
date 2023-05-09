@@ -150,9 +150,11 @@ https://templatemo.com/tm-563-seo-dream
                 <input type="file" id="inputFile" name="inputFile">
                 <br>
                 <br>
-                <label><b>Component Name:</b>&nbsp;&nbsp;&nbsp;</label>
+                <label><b>Component Name</b>&nbsp;&nbsp;&nbsp;</label>
                 <input type="text" name="cname" id="cname" placeholder="Enter Component Name" autocomplete="on">
                 <br>
+                <br>
+                <label><b>Component Description</b>&nbsp;&nbsp;&nbsp;</label>
                 <br>
                 <textarea name="description" type="text" class="form-control" id="description" placeholder="Enter Component Description" required=""></textarea>  
                 <br>
@@ -435,7 +437,7 @@ https://templatemo.com/tm-563-seo-dream
             <ul id="ul-history">
             <% for(var i=0 ; i < len ; i++ ) {%>
 
-                <li class="history-list"><a href="" target="_blank" id="hist-list"><img class="icon-img" src="/images/eye2.png" alt=""> &nbsp; &nbsp; &nbsp; <%= mobj[0].history[i].pipeline_name %></a></li>
+                <li class="history-list"><a href="/viewResult/?name=<%= mobj[0].history[i].pipeline_name %>" target="_blank" id="hist-list"><img class="icon-img" src="/images/eye2.png" alt=""> &nbsp; &nbsp; &nbsp; <%= mobj[0].history[i].pipeline_name %></a></li>
 
             <% } %>
           </ul>
@@ -669,6 +671,17 @@ https://templatemo.com/tm-563-seo-dream
 </body>
 <script>
   // var url = "";
+  let counter = -1;
+  function printContent( oper_list ){
+    if( counter > oper_list.length - 2 ){
+      counter = counter + 0;
+    }
+    else{
+      counter = counter + 1;
+    }
+    let n = counter + 1;
+    return "Step " + n.toString( ) + " " + oper_list[counter];
+  }
   function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
@@ -705,8 +718,10 @@ https://templatemo.com/tm-563-seo-dream
       // window.location.href = '/viewResult/?name='+localStorage.getItem('pipeline');
 
       let oper_name = "";
+      let oper_list = [];
       for (let i = 0; i < sendData.items.length; i++) {
         oper_name = oper_name + sendData.items[i].name + "\n";
+        oper_list.push( sendData.items[i].name );
         
       }
       console.log(oper_name);
@@ -716,15 +731,25 @@ https://templatemo.com/tm-563-seo-dream
       let timerInterval
       Swal.fire({
         title: 'Executing the Pipeline',
-        html: 'I will close in <b></b> milliseconds.',
-        timer: sendData.items.length * 1000,
+        html: 'Running <b></b>.',
+        width: 600,
+        padding: '3em',
+        color: '#716add',
+        background: '#fff url(/images/pop10.jpg)',
+        backdrop: `
+          rgba(0,0,123,0.4)
+          url("/images/pop4.jpg")
+          left top
+          no-repeat
+        `,
+        timer: sendData.items.length * 2000,
         timerProgressBar: true,
         didOpen: () => {
           Swal.showLoading()
           const b = Swal.getHtmlContainer().querySelector('b')
           timerInterval = setInterval(() => {
-            b.textContent = Swal.getTimerLeft()
-          }, 100)
+            b.textContent = printContent( oper_list )
+          }, 1500)
         },
         willClose: () => {
           clearInterval(timerInterval)
@@ -735,7 +760,9 @@ https://templatemo.com/tm-563-seo-dream
           console.log('I was closed by the timer')
         }
       })
-      await sleep(5000);
+      await sleep(sendData.items.length * 2000);
+
+      counter = -1;
       var link = document.createElement("a");
       console.log(window.origin + '/viewResult/?name='+localStorage.getItem('pipeline'));
       link.setAttribute('href', window.origin + '/viewResult/?name='+localStorage.getItem('pipeline'));
@@ -746,7 +773,7 @@ https://templatemo.com/tm-563-seo-dream
         console.log(err);
         // localStorage.removeItem('image');
       });
-    
+      // Swal.getTimerLeft()
   }
 
   function seturl(){
