@@ -5,32 +5,46 @@ const Minio = require('minio')
 var mysql = require('mysql')
 const fs = require('fs')
 const decompress = require("decompress");
+require('dotenv').config();
 
 app.use(express.json())
+var comp_port=8004
 
+const port = process.env.Node_manager_port || 8086;
 // My sql conection
-var connection = mysql.createConnection({
-  host     : "dfs-node-db.c6zbhfwprabi.eu-north-1.rds.amazonaws.com",
-  user     : "admin",
-  password : "dfsnjv123",
-  port     : "3306",
-  timeout  : 60000
+var mysqlconnection = mysql.createConnection({
+  host:process.env.DB_host,
+  user:process.env.DB_user,
+  password:process.env.DB_password,
+  port:process.env.DB_port,
+  timeout:6000
 });
 
+mysqlconnection.connect(function(err){
+  if(err){
+    console.log('Database connection failed:' + err.stack);
+    return;
+  }
+  console.log('Connected to database.');
+});
 
 
 // MinIO client creation
 var minioClient = new Minio.Client({
-  endPoint: '127.0.0.1',
+  endPoint: process.env.MinIO_endpoint,
   port: 9000,
   useSSL: false,
-  accessKey: '9QKx0lFAgwt0PBqi',
-  secretKey: 'vJ18iMajpBDKbuac8okG9W8b1okRFRT4'
+  accessKey: process.env.MinIO_accesskey,
+  secretKey: process.env.MinIO_secretkey
 });
+
+
+
+
+
 
 app.get('/health', (req,res)=>{
   res.send("Hi");
-
 });
 
 app.get('/redeploy/:port', (req,res)=>{
@@ -59,7 +73,7 @@ app.post('/deploy', (req,res)=>{
     component_desc = temp['c_desc']
     user_id = temp['user_id']
 
-    comp_folder = component_name.split(".");
+    comp_folder = component_file_name.split(".");
 
     var size = 0
 
@@ -100,10 +114,44 @@ app.post('/deploy', (req,res)=>{
         })
         .catch((error) => {
           console.log(error);
-        });    
-
+        });  
+        
       }, 3000);
 
+      setTimeout(function() {
+        let temp = destination.concat(comp_folder[0])
+        fs.appendFile(temp+'/.env', 'PORT='+comp_port, function (err) {
+          if (err) throw err;
+
+          var select_query = 'SELECT max(dfs.components.id) as cid from dfs.components'
+          mysqlconnection.query(select_query, (err,data)=>{
+            if(err){
+              console.log(err);
+              return;
+            }
+            console.log(data[0].cid)
+            url = 'http://127.0.0.1:'+comp_port+'/run';
+            var update_query = 'UPDATE dfs.components SET url = ? WHERE id = ?';
+            update_query = mysql.format(update_query, [url, data[0].cid ]);
+            console.log(update_query);
+            mysqlconnection.query(update_query, (err,data1)=>{
+              if(err){
+                console.log(err);
+                return;
+              }
+            });
+
+            
+          });
+
+          // data[0].id
+
+
+         
+          comp_port++;
+          console.log('Saved!');
+        });
+      },6000);
 
     // npm install command running inside the component  
     setTimeout(function() {  
@@ -116,21 +164,30 @@ app.post('/deploy', (req,res)=>{
           stdio: 'inherit'
         });
 
-      }, 6000);    
+      }, 9000);    
     
 
-    // Deploying the components  
+  
+    
     setTimeout(function() {
       temp = destination.concat(comp_folder[0])
-      runner_dest = temp.concat('/index.js')
-      require('child_process').fork(runner_dest);    
+      // runner_dest = temp.concat('/index.js')
+      const spawn = require('child_process').spawn;
+
+        spawn('node', ['index.js'], {
+          cwd: temp,        // <--- 
+          shell: true,
+          stdio: 'inherit'
+        });
     }, 20000);
-    
+
+
+
     res.send("Hello World.")
 
 });
 
 
-app.listen(8085, () => {
+app.listen(port, () => {
   console.log("Application started and Listening on port 8085");
 });

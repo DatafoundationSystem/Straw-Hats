@@ -1,9 +1,11 @@
-const express = require('express')
-const app = express()
-// const port = 8080
-const port = process.env.PORT || 8082;
+const express = require('express');
+const app = express();
+require('dotenv').config();
 
-const host = "127.0.0.1"
+const port = process.env.PORT;
+console.log(port);
+
+// const host = "127.0.0.1"
 app.use(express.json())
 app.use(express.urlencoded({extend:true}))
 
@@ -20,7 +22,7 @@ app.post('/run', (req,res) => {
   const pythonProcess = spawn('python3',["app/utility.py", ip_path, op_path]);
   pythonProcess.stdout.pipe(process.stdout);
 
-  res.send('Edge Detection Complete')
+  res.send('Task Completed')
 });
 
 app.listen(port, () => {

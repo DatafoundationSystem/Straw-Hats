@@ -3,18 +3,19 @@ const app = express();
 const Minio = require('minio')
 const axios = require('axios')
 const fetch = (url) => import('node-fetch').then(({default: fetch}) => fetch(url));
+require('dotenv').config();
 
 app.use(express.json())
-
+const port = process.env.Scheduler_port || 8001;
 
 //SQL Connection
 var mysql = require('mysql');
 var mysqlconnection = mysql.createConnection({
-  host     : "dfs-node-db.c6zbhfwprabi.eu-north-1.rds.amazonaws.com",
-  user     : "admin",
-  password : "dfsnjv123",
-  port     : "3306",
-  timeout  : 60000
+  host:process.env.DB_host,
+  user:process.env.DB_user,
+  password:process.env.DB_password,
+  port:process.env.DB_port,
+  timeout:6000
 });
 
 mysqlconnection.connect(function(err){
@@ -37,7 +38,7 @@ app.use(function(req, res, next) {
   next();
 });
 
-app.listen(8000, () => {
+app.listen(port, () => {
   console.log("Application started and Listening on port 8081");
 });
 
@@ -58,11 +59,7 @@ app.post("/createPipeline", async function (req, res) {
   var ip_path = req.body.imgpath;
 
   for(var comp of req.body.pipeline){
-    // setTimeout(function temp(){
-    //   console.log("------");
-    //   console.log(comp);
-    // }, 10000);
-
+ 
     let query = 'SELECT * FROM dfs.components WHERE name = ?';
     // console.log(comp['name']);
     

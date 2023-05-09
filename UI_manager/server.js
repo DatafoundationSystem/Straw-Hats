@@ -11,7 +11,7 @@ const fs = require("fs");
 const fs1 = require('fs-extra');
 var rimraf = require("rimraf");
 const crypto = require('crypto');
-
+require('dotenv').config();
 
 // const axios = require('axios')
 
@@ -26,13 +26,13 @@ app.use(function(req, res, next) {
   next();
 });
 
-const port = process.env.PORT || 3000;
+const port = process.env.UI_manager_port || 3001;
 
 var mysqlconnection = mysql.createConnection({
-  host:"dfs-node-db.c6zbhfwprabi.eu-north-1.rds.amazonaws.com",
-  user:"admin",
-  password:"dfsnjv123",
-  port:"3306",
+  host:process.env.DB_host,
+  user:process.env.DB_user,
+  password:process.env.DB_password,
+  port:process.env.DB_port,
   timeout:6000
 });
 
@@ -48,16 +48,16 @@ mysqlconnection.connect(function(err){
 
 
 var minioClient = new Minio.Client({
-  endPoint: '127.0.0.1',
+  endPoint: process.env.MinIO_endpoint,
   port: 9000,
   useSSL: false,
-  accessKey: '9QKx0lFAgwt0PBqi',
-  secretKey: 'vJ18iMajpBDKbuac8okG9W8b1okRFRT4'
+  accessKey: process.env.MinIO_accesskey,
+  secretKey: process.env.MinIO_secretkey
 });
 
 //Encrypting text
 function encrypt(text) {
-  const secret = 'Vishal8199';
+  const secret = process.env.Secret_Key;
  
 // Calling createHash method
 const hash = crypto.createHash('sha256', secret)
@@ -90,7 +90,7 @@ app.get('/health', (req,res)=>{
 app.get('/', (req,res)=>{
   if(req.cookies['access_token']){
     try{
-      jwt.verify(req.cookies['access_token'], 'SuperSecretKey');
+      jwt.verify(req.cookies['access_token'], process.env.Token_enc_key);
     }catch{
       res.render('login.ejs', {msg: ""});
       return;
@@ -126,7 +126,7 @@ app.post("/", function(req,res){
       if(hashed_pass == data[0].pass){
         // set cookie
         console.log(2);
-        var token = jwt.sign({username : username, userid:data[0].user_id}, "SuperSecretKey", {expiresIn : 86400});
+        var token = jwt.sign({username : username, userid:data[0].user_id}, process.env.Token_enc_key, {expiresIn : 86400});
         console.log(token);
         
         res
@@ -190,7 +190,7 @@ app.post("/signup", function(req,res){
           return;
         }
 
-      var token = jwt.sign({username : username, userid:data[0].user_id}, "SuperSecretKey", {expiresIn : 86400});
+      var token = jwt.sign({username : username, userid:data[0].user_id}, process.env.Token_enc_key, {expiresIn : 86400});
         console.log(token);
         
         res
@@ -221,7 +221,7 @@ app.get("/home", (req, res) => {
   }else{
     // console.log(req.cookies['access_token']);
     try{
-      decoded = jwt.verify(req.cookies['access_token'], 'SuperSecretKey');
+      decoded = jwt.verify(req.cookies['access_token'], process.env.Token_enc_key);
     }catch(err){
       res.redirect('/');
     } 
@@ -318,7 +318,7 @@ app.post("/upload", multer({storage: multer.memoryStorage()}).single("mypic"),fu
   console.log(req.file);
   console.log(req.body);
   try{
-    decoded = jwt.verify(req.cookies['access_token'], 'SuperSecretKey');
+    decoded = jwt.verify(req.cookies['access_token'], process.env.Token_enc_key);
   }catch(err){
     res.redirect('/');
   } 
@@ -341,7 +341,7 @@ app.post("/upload", multer({storage: multer.memoryStorage()}).single("mypic"),fu
         console.log(err);
         res.send("Error uploading image");
       }
-      minioClient.putObject('uploads', imgpath, req.file.buffer, function(err, etag) {
+      minioClient.putObject(MinIO_img_Bucket, imgpath, req.file.buffer, function(err, etag) {
         if (err) return console.log(err);
         res.redirect('/home#toolbar');
       
@@ -364,7 +364,7 @@ app.post("/compUpload", multer({storage: multer.memoryStorage()}).single("inputF
   let comp_name = req.body.cname;
   let comp_desc = req.body.description;
   
-  minioClient.putObject('uploads', req.file.originalname, req.file.buffer, function(err, etag) {
+  minioClient.putObject(process.env.MinIO_comp_Bucket, req.file.originalname, req.file.buffer, function(err, etag) {
     if (err) return console.log(err);
     res.redirect('/home');
   
@@ -378,7 +378,7 @@ app.post("/compUpload", multer({storage: multer.memoryStorage()}).single("inputF
     }else{
       // console.log(req.cookies['access_token']);
       try{
-        decoded = jwt.verify(req.cookies['access_token'], 'SuperSecretKey');
+        decoded = jwt.verify(req.cookies['access_token'], process.env.Token_enc_key);
       }catch(err){
         res.redirect('/');
       } 
@@ -426,7 +426,7 @@ app.post("/compUpload", multer({storage: multer.memoryStorage()}).single("inputF
               "user_id": uid
             }
       
-            axios.post('http://127.0.0.1:8085/deploy', sendData)
+            axios.post(process.env.Node_manager_url, sendData)
             .then(function (response) {
               console.log(response);
             })
@@ -466,7 +466,7 @@ app.post("/compUpload", multer({storage: multer.memoryStorage()}).single("inputF
 
 app.post("/postjson", function (req, res) {
   try{
-    decoded = jwt.verify(req.cookies['access_token'], 'SuperSecretKey');
+    decoded = jwt.verify(req.cookies['access_token'], process.env.Token_enc_key);
   }catch(err){
     res.redirect('/');
   } 
@@ -489,7 +489,7 @@ app.post("/postjson", function (req, res) {
       imgpath: imgpath,
       pipeline: req.body.items
     };
-    axios.post('http://127.0.0.1:8000/createPipeline',sendData)
+    axios.post(process.env.Scheduler_url,sendData)
     .then(resp => {
       console.log("response recieved");
       // print(res);
@@ -512,7 +512,7 @@ app.get("/viewResult", (req, res) => {
     console.log("======================== /viewResult ==========================");
 
     try{
-      decoded = jwt.verify(req.cookies['access_token'], 'SuperSecretKey');
+      decoded = jwt.verify(req.cookies['access_token'], process.env.Token_enc_key);
     }catch(err){
       res.redirect('/');
     } 
@@ -589,7 +589,7 @@ app.get("/viewResult", (req, res) => {
 
                     let local_path = __dirname + '/public' + image_path;
                     // download files from mino to local storage ===============================
-                    minioClient.fGetObject( 'uploads' , image_name, local_path, function(err) {
+                    minioClient.fGetObject( process.env.MinIO_img_Bucket , image_name, local_path, function(err) {
                       if (err) {
                           console.log("Error downloading");
                           return console.log(err);
@@ -662,7 +662,7 @@ app.get("/viewResult", (req, res) => {
                 
                 // download files from mino to local storage ===============================
                 let local_path = __dirname + '/public' + image_path;
-                minioClient.fGetObject( 'uploads' , image_name, local_path, function(err) {
+                minioClient.fGetObject( process.env.MinIO_img_Bucket , image_name, local_path, function(err) {
                   if (err) {
                       return console.log(err);
                   }
@@ -698,7 +698,3 @@ app.get("/viewResult", (req, res) => {
 
     
 });
-
-
-
-
