@@ -51,8 +51,8 @@ var minioClient = new Minio.Client({
   endPoint: '127.0.0.1',
   port: 9000,
   useSSL: false,
-  accessKey: '9QKx0lFAgwt0PBqi',
-  secretKey: 'vJ18iMajpBDKbuac8okG9W8b1okRFRT4'
+  accessKey: 'EitPADwoAUvkzhs6',
+  secretKey: 'g82ahUIxSAhtIJeCoLWTV1YrONFpjTop'
 });
 
 //Encrypting text
@@ -83,6 +83,9 @@ app.use(express.static(path.join(__dirname + '/public')));
 app.use(express.json())
 app.use(express.urlencoded({extended:true}))
 
+app.get('/health', (req,res)=>{
+  res.send("Hi");
+});
 
 app.get('/', (req,res)=>{
   if(req.cookies['access_token']){
@@ -361,7 +364,7 @@ app.post("/compUpload", multer({storage: multer.memoryStorage()}).single("inputF
   let comp_name = req.body.cname;
   let comp_desc = req.body.description;
   
-  minioClient.putObject('comp-upload', req.file.originalname, req.file.buffer, function(err, etag) {
+  minioClient.putObject('uploads', req.file.originalname, req.file.buffer, function(err, etag) {
     if (err) return console.log(err);
     res.redirect('/home');
   

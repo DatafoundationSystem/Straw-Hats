@@ -41,6 +41,10 @@ app.listen(8000, () => {
   console.log("Application started and Listening on port 8081");
 });
 
+app.get('/health', (req,res)=>{
+  res.send("Hi");
+});
+
 app.get('/', (req,res)=>{
     res.send("Hello World.")
 });

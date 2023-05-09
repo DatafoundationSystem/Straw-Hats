@@ -669,6 +669,9 @@ https://templatemo.com/tm-563-seo-dream
 </body>
 <script>
   // var url = "";
+  function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
   function sendPipeline(){
     var imageFlag = (localStorage.getItem('image') === null);
     if(imageFlag){
@@ -696,7 +699,7 @@ https://templatemo.com/tm-563-seo-dream
         'Content-Type': 'application/json'
       },
       body: JSON.stringify(sendData)
-    }).then((res) =>{
+    }).then(async function(res){
       console.log("Hello world");
       console.log(res);
       // window.location.href = '/viewResult/?name='+localStorage.getItem('pipeline');
@@ -732,15 +735,7 @@ https://templatemo.com/tm-563-seo-dream
           console.log('I was closed by the timer')
         }
       })
-
-      var date = new Date();
-      var curr_dte = null;
-      do{
-        curr_dte = new Date();
-      }while(
-        curr_dte - date < 5000
-      );
-
+      await sleep(5000);
       var link = document.createElement("a");
       console.log(window.origin + '/viewResult/?name='+localStorage.getItem('pipeline'));
       link.setAttribute('href', window.origin + '/viewResult/?name='+localStorage.getItem('pipeline'));
