@@ -9,6 +9,9 @@ console.log(port);
 app.use(express.json())
 app.use(express.urlencoded({extend:true}))
 
+
+
+
 app.get('/', (req, res) => {
   res.send('Hello World!')
 })
@@ -26,5 +29,5 @@ app.post('/run', (req,res) => {
 });
 
 app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`)
+  console.log(`------>Example app listening on port ${port}`)
 })

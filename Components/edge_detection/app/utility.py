@@ -1,21 +1,26 @@
 import sys
 from minio import Minio
 from minio.error import S3Error
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 def preprocess():
     from src.src import simple_edge_detection, cv2
-    image = cv2.imread("ip.jpg", 0)
+    image = cv2.imread("ip.jpg")
     img = simple_edge_detection(image)
     cv2.imwrite("op.jpg", img) 
     
 if __name__ == '__main__':
-    
+    # print(os.environ.get('MinIO_endpoint') + ":" + os.environ.get('MinIO_port'))
+    endpoint = os.environ.get('MinIO_endpoint') + ":" + os.environ.get('MinIO_port')
     client = Minio(
         # "play.min.io",
         "127.0.0.1:9000",
         secure=False,
-        access_key = '9QKx0lFAgwt0PBqi',
-        secret_key = 'vJ18iMajpBDKbuac8okG9W8b1okRFRT4'
+        access_key = os.environ.get("MinIO_accesskey"),
+        secret_key = os.environ.get("MinIO_secretkey")
     )
 
     image_url = sys.argv[1]
@@ -24,7 +29,7 @@ if __name__ == '__main__':
     while not flag:
         try:
             client.fget_object(
-                "uploads", image_url, "ip.jpg",
+                os.environ.get("MinIO_img_Bucket"), image_url, "ip.jpg",
             )
             flag = True
         except:
@@ -35,6 +40,6 @@ if __name__ == '__main__':
     preprocess()
     print("preprocessed")
     client.fput_object(
-        "uploads", new_img, "op.jpg",
+        os.environ.get("MinIO_img_Bucket"), new_img, "op.jpg",
     )
     print("Image Uploaded sucessfully")

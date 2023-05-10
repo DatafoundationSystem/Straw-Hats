@@ -26,7 +26,7 @@ app.use(function(req, res, next) {
   next();
 });
 
-const port = process.env.UI_manager_port || 3001;
+const port = process.env.UI_manager_port || 3000;
 
 var mysqlconnection = mysql.createConnection({
   host:process.env.DB_host,
@@ -74,7 +74,7 @@ return hash;
 
 
 app.listen(port, () => {
-  console.log(`Application started and Listening on port ${port}`);
+  console.log(`------>UI Manager started and Listening on port ${port}`);
 });
 
 app.set('view engine', 'ejs');
@@ -341,7 +341,7 @@ app.post("/upload", multer({storage: multer.memoryStorage()}).single("mypic"),fu
         console.log(err);
         res.send("Error uploading image");
       }
-      minioClient.putObject(MinIO_img_Bucket, imgpath, req.file.buffer, function(err, etag) {
+      minioClient.putObject(process.env.MinIO_img_Bucket, imgpath, req.file.buffer, function(err, etag) {
         if (err) return console.log(err);
         res.redirect('/home#toolbar');
       

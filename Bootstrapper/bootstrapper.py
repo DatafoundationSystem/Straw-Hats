@@ -12,10 +12,8 @@ def run(path):
     # os.system("npm start")
 
 t1 = threading.Thread(target=run, args=("../UI_manager",))
-t2 = threading.Thread(target=run, args=("../Scheduler",))
 t3 = threading.Thread(target=run, args=("../Node_Manager",))
 
 t1.start()
-t2.start()
 t3.start()
 

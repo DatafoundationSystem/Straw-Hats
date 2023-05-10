@@ -39,7 +39,7 @@ app.use(function(req, res, next) {
 });
 
 app.listen(port, () => {
-  console.log("Application started and Listening on port 8081");
+  console.log(`------>Scheduler started and Listening on port ${port}`);
 });
 
 app.get('/health', (req,res)=>{

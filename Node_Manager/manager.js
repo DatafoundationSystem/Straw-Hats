@@ -39,8 +39,22 @@ var minioClient = new Minio.Client({
 });
 
 
-
-
+sql_query = "SELECT object_name FROM dfs.components";
+mysqlconnection.query(sql_query, async (err,comps)=>{
+  if(err){ 
+    console.log(err);
+    return;
+  }
+  comp_list = ["app_runner.py","../UI_manager","../Scheduler"];
+  // console.log(comps);
+  for(var i=1; i<comps.length; i++){
+    comp_list.push("../Components/" + comps[i].object_name.split('.')[0]);
+  }
+  console.log(comp_list); 
+  const spawn = require("child_process").spawn;
+  const pythonProcess = spawn('python3',comp_list);
+  pythonProcess.stdout.pipe(process.stdout);
+});
 
 
 app.get('/health', (req,res)=>{
@@ -166,9 +180,6 @@ app.post('/deploy', (req,res)=>{
 
       }, 9000);    
     
-
-  
-    
     setTimeout(function() {
       temp = destination.concat(comp_folder[0])
       // runner_dest = temp.concat('/index.js')
@@ -187,7 +198,6 @@ app.post('/deploy', (req,res)=>{
 
 });
 
-
 app.listen(port, () => {
-  console.log("Application started and Listening on port 8085");
+  console.log("------>Node Manager started and Listening on port 8085");
 });
