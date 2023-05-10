@@ -83,8 +83,8 @@ app.use(express.static(path.join(__dirname + '/public')));
 app.use(express.json())
 app.use(express.urlencoded({extended:true}))
 
-app.get('/health', (req,res)=>{
-  res.send("Hi");
+app.post('/heart', (req,res)=>{
+  res.send({msg:"OK"});
 });
 
 app.get('/', (req,res)=>{

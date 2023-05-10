@@ -8,7 +8,7 @@ const decompress = require("decompress");
 require('dotenv').config();
 
 app.use(express.json())
-var comp_port=8004
+var comp_port=8010
 
 const port = process.env.Node_manager_port || 8086;
 // My sql conection
@@ -57,8 +57,8 @@ mysqlconnection.query(sql_query, async (err,comps)=>{
 });
 
 
-app.get('/health', (req,res)=>{
-  res.send("Hi");
+app.post('/heart', (req,res)=>{
+  res.send({msg:"OK"});
 });
 
 app.get('/redeploy/:port', (req,res)=>{
@@ -76,6 +76,14 @@ app.get('/redeploy/:port', (req,res)=>{
 app.get('/', (req,res)=>{
   res.send("Hello World.")
 });
+
+app.post('/deploynode', (req,res)=>{
+  console.log(req.body);
+  const spawn = require("child_process").spawn;
+  const pythonProcess = spawn('python3',req.body.path);
+  pythonProcess.stdout.pipe(process.stdout);
+
+})
 
 app.post('/deploy', (req,res)=>{
     // Json recieved from UI manager
@@ -162,7 +170,7 @@ app.post('/deploy', (req,res)=>{
 
 
          
-          comp_port++;
+          
           console.log('Saved!');
         });
       },6000);
@@ -182,6 +190,7 @@ app.post('/deploy', (req,res)=>{
     
     setTimeout(function() {
       temp = destination.concat(comp_folder[0])
+      comp_port++;
       // runner_dest = temp.concat('/index.js')
       const spawn = require('child_process').spawn;
 
@@ -190,13 +199,15 @@ app.post('/deploy', (req,res)=>{
           shell: true,
           stdio: 'inherit'
         });
-    }, 20000);
+    }, 25000);
 
 
 
     res.send("Hello World.")
 
 });
+
+
 
 app.listen(port, () => {
   console.log("------>Node Manager started and Listening on port 8085");

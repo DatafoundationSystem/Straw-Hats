@@ -9,6 +9,10 @@ console.log(port);
 app.use(express.json())
 app.use(express.urlencoded({extend:true}))
 
+app.post('/heart', (req,res)=>{
+  res.send({msg:"OK"});
+});
+
 app.get('/', (req, res) => {
   res.send('Hello World!')
 })

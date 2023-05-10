@@ -42,8 +42,8 @@ app.listen(port, () => {
   console.log(`------>Scheduler started and Listening on port ${port}`);
 });
 
-app.get('/health', (req,res)=>{
-  res.send("Hi");
+app.post('/heart', (req,res)=>{
+  res.send({msg:"OK"});
 });
 
 app.get('/', (req,res)=>{
