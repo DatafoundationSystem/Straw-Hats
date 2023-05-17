@@ -188,7 +188,7 @@ We propose a distributed platform that provides build, development and deploymen
 </br>
 </br>
 
-**Sequence Diagram**
+
 </br>
 Component Upload Sequence Diagram
 ![alt text](https://github.com/Jasika16/Straw-Hats/blob/main/Assets/Images/Sequence_Diagram1.png)
@@ -203,3 +203,52 @@ Pipeline Working Sequence Diagram
 
 **Figure 6:** Sequence Diagram for Pipeline working
 
+</br>
+</br>
+
+**Front-end**
+</br>
+![alt text](https://github.com/Jasika16/Straw-Hats/blob/main/Assets/Images/login_page.png)
+
+**Figure 7:** Login Page
+
+</br>
+</br>
+
+![alt text](https://github.com/Jasika16/Straw-Hats/blob/main/Assets/Images/home_page.png)
+
+**Figure 8:** Home Page
+
+</br>
+</br>
+
+![alt text](https://github.com/Jasika16/Straw-Hats/blob/main/Assets/Images/setup_pipeline.png)
+
+**Figure 9:** Setup Pipeline
+
+</br>
+</br>
+
+![alt text](https://github.com/Jasika16/Straw-Hats/blob/main/Assets/Images/cv_toolbar.png)
+
+**Figure 9:** CV Toolbar
+
+</br>
+</br>
+
+![alt text](https://github.com/Jasika16/Straw-Hats/blob/main/Assets/Images/view_results.png)
+
+**Figure 10:** Pipeline Preview
+
+</br>
+</br>
+
+![alt text](https://github.com/Jasika16/Straw-Hats/blob/main/Assets/Images/history_section.png)
+
+**Figure 11:** History Section
+</br>
+</br>
+
+![alt text](https://github.com/Jasika16/Straw-Hats/blob/main/Assets/Images/results_page.png)
+
+**Figure 12:** Results Page
