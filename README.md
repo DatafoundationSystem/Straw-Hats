@@ -190,6 +190,7 @@ We propose a distributed platform that provides build, development and deploymen
 
 
 </br>
+
 Component Upload Sequence Diagram
 ![alt text](https://github.com/Jasika16/Straw-Hats/blob/main/Assets/Images/Sequence_Diagram1.png)
 
