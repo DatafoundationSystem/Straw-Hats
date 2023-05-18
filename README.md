@@ -266,12 +266,12 @@ Pipeline Working Sequence Diagram
               * Secret_key and token key
               
 3) enter `npm install` in every services.
-4) Start the heartbeat service in a new integrated terminal by entering following commands.
+4) Start the heartbeat service by entering following commands:-
 
               * cd Headtbeat
               * npm start
               
-5) Run Bootstrap service using this command
+5) Run Bootstrap service in a new terminal using following commands:-
 
               * cd Bootstrapper
               * python3 bootstrapper.py
