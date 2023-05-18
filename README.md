@@ -30,9 +30,31 @@ Building an Artificial Intelligence (AI) / computer vision (CV) project for auto
 - JSON based configuration setup
 - Stepwise execution, logging and tracking.
 
-### 3. Requirements:
+### 3. Instructions to Run
 
-**3.1 Functional Requirements**
+1) Clone the repository.
+2) Modify .env files according to your requirement:-
+
+              * Change port number of the services and end points according to your need.
+              * Change RDS database credential such as host, username, password and port
+              * Change MinIO credential such as endpoints, port, accesskey, secretkey, image bucket name, component bucket name.
+              * Secret_key and token key
+              
+3) enter `npm install` in every services.
+4) Start the heartbeat service by entering following commands:-
+
+              * cd Headtbeat
+              * npm start
+              
+5) Run Bootstrap service in a new terminal using following commands:-
+
+              * cd Bootstrapper
+              * python3 bootstrapper.py
+ 
+
+### 4. Requirements:
+
+**4.1 Functional Requirements**
 
   - **A. AI / Components:**
 
@@ -66,7 +88,7 @@ Building an Artificial Intelligence (AI) / computer vision (CV) project for auto
 
     The user interface is key to application usability. The application will have a secure, convenient and extensible user interface. It would enable end-users to select tools for preprocessing of their images from the toolbox provided and then order them appropriately to set-up the pipeline. An efficient user-interface in terms of both speed and use for preprocessing their images will provide seamless experience to build AI/CV projects.
 
-**3.2 Non-functional Requirements**
+**4.2 Non-functional Requirements**
 
   - **A. Portability**
 
@@ -94,9 +116,9 @@ Building an Artificial Intelligence (AI) / computer vision (CV) project for auto
 
     All the actors on the platform have predefined privileges. These actors are administrator, end user, moderator, and configurer. These roles define what are the responsibilities and capabilities of each of the users on the platform.
 
-### 4. Scope:
+### 5. Scope:
 
-**4.1 Project Scope**
+**5.1 Project Scope**
 
 Throughout the project, we can divide it into phases in order to have modular, scalable, and optimized versions of the previous phases. The following components will be delivered at the end :
 
@@ -108,12 +130,12 @@ Throughout the project, we can divide it into phases in order to have modular, s
   - Execution of the CV Tools and providing the final pre-processed data to the end user.
   - Project Report: A detailed report outlining the objectives, methodology, results, and conclusions of the project.
 
-**4.2 Project out of scope:**
+**5.2 Project out of scope:**
 
 - Developing AI/CV models is not in the scope of the project.
 - Execution of the model or providing final performance measures such as accuracy, precision , confusion matrix etc. is not in the scope of the project.
 
-### 5. Architecture:
+### 6. Architecture:
 
 We propose a distributed platform that provides build, development and deployment functionalities for different AI/CV Tools. Most data becomes useless just seconds after 1s it is generated, so having the lowest latency possible between the data and the decision is critical. With this platform, we bring AI preprocessing capabilities to edge gateway. The platform consists of following microservices.
 
@@ -123,13 +145,13 @@ We propose a distributed platform that provides build, development and deploymen
 **Figure 1:** System Architecture
 
 
-**5.1 UI Manager:**
+**6.1 UI Manager:**
   - Provides a CV components toolbar, with drag and drop functionality to create a customized CV pipeline
   - Provide a functionality for end user to choose components according to its requirement for the pipeline execution.
   - Redirects the requests to various services. 
   - Display final output to the end users after the execution of the pipeline.
 
-**5.2 Component Manager:**
+**6.2 Component Manager:**
   - Users can upload Component as zip file. The contents of zip file should be as follows.
     ```
     └── Component
@@ -141,14 +163,14 @@ We propose a distributed platform that provides build, development and deploymen
     ```
   - Wraps a node.js server with `/preprocess` endpoint to call `preprocess` function inside `utility.py` file.
 
-**5.3 Node Manager:**
+**6.3 Node Manager:**
   - First service to be initialised by the bootstrapper.
   - Deploy all the services in the initial stage of bootstrapping process.
   - Creates a docker container for each of the services and Components deployed on the platform.
   - Runs these containers on nodes with least load.
   - Performs load balancing.
 
-**5.4 Scheduler:**
+**6.4 Scheduler:**
   - Generates a config.json using the pipeline Components specified by the end-user through UI.
   - Execute the Component according to config.json by providing the input and fetching the output while checking the consistency i.e. output of one Component must match the input of next Component in the pipeline.
   - Provides the end output of pipeline to the UI.
@@ -160,15 +182,15 @@ We propose a distributed platform that provides build, development and deploymen
   ![alt text](https://github.com/Jasika16/Straw-Hats/blob/main/Assets/Images/scheduler.png)
   **Figure 2:** Scheduler Architecture
 
-**5.5 Nodes:**
+**6.5 Nodes:**
   - The nodes are running containers of different microservices and CV Tools which are deployed on the platform.
 
-**5.6 Monitoring Service:**
+**6.6 Monitoring Service:**
   - Health check calls `/health` endpoint of every registered service to check if the service is running. If found not running, it communicates with Node Manager to get a machine with least load and run the service on that machine.
   - Health check pings all the service's IP to check if any machine is down or out of the network. If found not reachable, another instance of the same service is relaunched.
 
 
-### 6. Representation:
+### 7. Representation:
 
 **Use Case Diagram**
 
@@ -254,25 +276,3 @@ Pipeline Working Sequence Diagram
 
 **Figure 12:** Results Page
 
-
-**5.3 Steps to Run:**
-
-1) Clone the repository.
-2) Modify .env files according to your requirement:-
-
-              * Change port number of the services and end points according to your need.
-              * Change RDS database credential such as host, username, password and port
-              * Change MinIO credential such as endpoints, port, accesskey, secretkey, image bucket name, component bucket name.
-              * Secret_key and token key
-              
-3) enter `npm install` in every services.
-4) Start the heartbeat service by entering following commands:-
-
-              * cd Headtbeat
-              * npm start
-              
-5) Run Bootstrap service in a new terminal using following commands:-
-
-              * cd Bootstrapper
-              * python3 bootstrapper.py
- 
