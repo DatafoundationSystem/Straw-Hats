@@ -253,3 +253,26 @@ Pipeline Working Sequence Diagram
 ![alt text](https://github.com/Jasika16/Straw-Hats/blob/main/Assets/Images/results_page.png)
 
 **Figure 12:** Results Page
+
+
+**5.3 Steps to Run:**
+
+1) Clone the repository.
+2) Modify .env files according to your requirement:-
+
+              * Change port number of the services and end points according to your need.
+              * Change RDS database credential such as host, username, password and port
+              * Change MinIO credential such as endpoints, port, accesskey, secretkey, image bucket name, component bucket name.
+              * Secret_key and token key
+              
+3) enter `npm install` in every services.
+4) Start the heartbeat service in a new integrated terminal by entering following commands.
+
+              * cd Headtbeat
+              * npm start
+              
+5) Run Bootstrap service using this command
+
+              * cd Bootstrapper
+              * python3 bootstrapper.py
+ 
